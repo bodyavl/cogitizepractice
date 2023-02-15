@@ -13,7 +13,8 @@ function errorHandler(error, req, res, next) {
 }
 app.get("/", (req, res) => {
   console.log(req.query);
-  res.send("Hello World!");
+  console.log("TEXT")
+  res.send("Hello");
 });
 
 app.post("/", (req, res, next) => {
