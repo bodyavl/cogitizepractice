@@ -13,7 +13,10 @@ function errorHandler(error, req, res, next) {
 }
 app.get("/", (req, res) => {
   console.log(req.query);
-  res.send("Hello World!");
+  console.log("1")
+  console.log("2")
+  console.log("3")
+  res.send("Hello World!!!!!!!");
 });
 
 app.post("/", (req, res, next) => {
