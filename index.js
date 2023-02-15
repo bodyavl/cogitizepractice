@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const database = require("./database");
+const Movie = require("./database/schemes/movie");
 
 const app = express();
 app.use(bodyParser.json({ type: "application/json" }));
@@ -16,11 +18,33 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.post("/", (req, res, next) => {
+app.get("/movies", async (req, res, next) => {
   try {
-    const { items } = req.body;
-    if (!items) throw new Error("Items is not provided!");
-    res.send("Hello World! POST");
+    
+    //Returns all movie with title "Godfather"
+    // const movie = await Movie.find({title:"Godfather"});
+    
+    //Returns one movie with title "Godfather"
+    // const movie = await Movie.findOne({title:"Godfather"});
+    
+    //Find all moview
+    const movies = await Movie.find();
+    res.json(movies);
+  } catch (error) {
+    next(error);
+  }
+});
+app.post("/createMovie", async (req, res, next) => {
+  try {
+    const { title, author, description } = req.body;
+    const movie = await Movie.create({
+      title,
+      author,
+      description
+    });
+    console.log("Movie created:", movie);
+
+    res.json(movie);
   } catch (error) {
     next(error);
   }
