@@ -32,11 +32,11 @@ app.post("/CreateMovie", async (req, res, next) => {
 app.get("/allMovies", async (req, res, next) => {
   try {
     const allmovies = await Movie.find();
-    if(allmovies == null){
-      res.json(allmovies);
+    if(!allmovies){
+      throw new Error("There are no movies");
     }
     else{
-      throw new Error("There are no movies");
+      res.json(allmovies);
     }
   } catch (error) {
     next(error);
@@ -47,11 +47,11 @@ app.get("/movie/:id", async (req, res, next) => {
   try {
     const { id } = req.params
     const movieid = await Movie.findById(id);
-    if(movieid == null){
-      res.json(movieid);
+    if(!movieid){
+      throw new Error("There is no movie with this id");
     }
     else{
-      throw new Error("There is no movie with this id");
+      res.json(movieid);
     }
   } catch (error) {
     next(error);
