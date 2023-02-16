@@ -1,8 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const database = require("./database");
+const Movie = require("./database/schemes/movie");
 app.use(bodyParser.json({type: 'application/json'}));
-const port = 3000
+const port = 368
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
@@ -10,21 +12,40 @@ function errorHandler(error, req, res, next) {
   res.status(500).send(error.message);
 }
 
-app.get('/', (req, res) => {
-    console.log(req.query);
-    res.send('Hello geted World!')
+app.post("/CreateMovie", async (req, res, next) => {
+  try {
+    const { title, author, rating, runtime, genre} = req.body;
+    const movie = await Movie.create({
+      title,
+      author,
+      rating,
+      runtime,
+      genre,
+    });
+    console.log("Created movie:", movie);
+    res.json(movie);
+  } catch (error) {
+    next(error);
+  }
 });
 
-app.post('/', (req, res) => {
-    console.log(req.body);
-    res.send('Hello posted World!')
-    try {
-      const { items } = req.body;
-      if (!items) throw new Error("Item is nor provided")
-      res.send('Hello World!')
-    } catch (error) {
-      next(error);
-    }
+app.get("/GetAllMovies", async (req, res, next) => {
+  try {
+    const allmovies = await Movie.find();
+    res.json(allmovies);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get("/GetMovies:id", async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const movieid = await Movie.findById(id);
+    res.json(movieid);
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use(errorHandler);
