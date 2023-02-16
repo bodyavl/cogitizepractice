@@ -28,14 +28,14 @@ app.get("/movies", async (req, res, next) => {
   }
 });
 
-app.get("/getMovieById",async (req,res,next)=>{
+app.get("/getMovieById/:_id",async (req,res,next)=>{
   try {
-    const { _id } = req.body
-    const movies = await Movie.findById(_id);
-    if(movies == null){
+    const { _id } = req.params
+    const movie = await Movie.findById(_id);
+    if(movie == null){
       throw new Error("Movie not found");
     }
-    else res.json(movies);
+    else res.json(movie);
   } catch (error) {
     next(error);
   }
