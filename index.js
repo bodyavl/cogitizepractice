@@ -4,7 +4,7 @@ const app = express();
 const database = require("./database");
 const Movie = require("./database/schemes/movie");
 app.use(bodyParser.json({type: 'application/json'}));
-const port = 368
+const port = 700
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
@@ -29,7 +29,7 @@ app.post("/CreateMovie", async (req, res, next) => {
   }
 });
 
-app.get("/GetAllMovies", async (req, res, next) => {
+app.get("/allMovies", async (req, res, next) => {
   try {
     const allmovies = await Movie.find();
     res.json(allmovies);
@@ -38,7 +38,7 @@ app.get("/GetAllMovies", async (req, res, next) => {
   }
 });
 
-app.get("/GetMovies:id", async (req, res, next) => {
+app.get("/movie/:id", async (req, res, next) => {
   try {
     const { id } = req.params
     const movieid = await Movie.findById(id);
