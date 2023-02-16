@@ -35,7 +35,7 @@ app.get('/movies', async (req, res, next) => {
     
 })
 
-app.get('/movies/:id', async (req, res, next) => {
+app.get('/movie/:id', async (req, res, next) => {
     try {
         const { id } = req.params;
         const movie = await Movie.findById(id)
