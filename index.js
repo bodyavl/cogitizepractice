@@ -12,11 +12,8 @@ function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
   console.log("Error occered:", error.message);
   res.status(500).send(error.message);
+
 }
-app.get("/", (req, res) => {
-  console.log(req.query);
-  res.send('Hello World!')
-})
 
 app.get("/movies", async (req, res, next) => {
   try {
@@ -27,13 +24,35 @@ app.get("/movies", async (req, res, next) => {
   }
 });
 
+app.get("/movie/:id", async (req, res, next) => {
+  try {
+    const movieId = req.params["id"];
+    const movie = await Movie.findById(movieId);
+    res.json(movie);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete("/movie/:id", async (req, res, next) => {
+  try {
+    const movieId = req.params["id"];
+    const movie = await Movie.findByIdAndDelete(movieId);
+    res.json(movie);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.post("/createMovie", async (req, res, next) => {
   try {
-    const { title, author, description } = req.body;
+    const { title, author, description, genre, rating } = req.body;
     const movie = await Movie.create({
       title,
       author,
-      description
+      description,
+      genre,
+      rating
     });
     console.log("Movie created:", movie);
 
@@ -47,4 +66,4 @@ app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-})
+});
