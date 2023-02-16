@@ -25,10 +25,10 @@ app.use(bodyParser.json());
 
 
 
-app.get("/getMovie/:title", async (req, res, next) => {
+app.get("/getMovie/:id", async (req, res, next) => {
     try {
-        const movieTitle = req.params.title;
-        const movie = await Movie.findOne({title: movieTitle});
+        const movieId = req.params.id;
+        const movie = await Movie.findById(movieId);
         console.log(movie);
         res.json(movie);
     }
