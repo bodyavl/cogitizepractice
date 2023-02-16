@@ -30,9 +30,10 @@ app.get("/movies", async (req, res, next) => {
 
 app.get("/getMovieById",async (req,res,next)=>{
   try {
-    const movies = await Movie.find(req.body);
-    if(movies.length == 0){
-      res.send("Movie not found");
+    const { _id } = req.body
+    const movies = await Movie.findById(_id);
+    if(movies == null){
+      throw new Error("Movie not found");
     }
     else res.json(movies);
   } catch (error) {
