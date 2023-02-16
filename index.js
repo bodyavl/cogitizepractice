@@ -30,7 +30,14 @@ app.get("/getMovie/:id", async (req, res, next) => {
         const movieId = req.params.id;
         const movie = await Movie.findById(movieId);
         console.log(movie);
-        res.json(movie);
+        
+        if(movie != null) {
+            res.json(movie);
+        }
+        else {
+            throw new Error("Incorrect movie id!");
+        }
+        
     }
     catch(err) {
         next(err);
