@@ -61,10 +61,7 @@ app.post('/createMovie', async (req, res, next) => {
         genre
       });
       console.log("Movie created:", movie);
-
-      res.json(movie);
-      await movie.save();
-
+      
       res.status(201).json(movie);
     } catch (error) {
       next(error);
