@@ -1,0 +1,11 @@
+{
+  "name": "art",
+  "version": "1.0.0",
+  "description": "info about movie. Post and Get router",
+  "main": "index.js",
+  "scripts": {
+  "test": "wdio"
+  },
+  "author": "",
+  "license": "ISC"
+}
