@@ -6,10 +6,10 @@ const Movie = require("../db/models/movie");
 
 router.post("/create", async (req, res, next) => {
     try {
+        console.log("Create movie request", req.body);
         const { title, description, image, slogan, author, genres, date, runTime, rating } = req.body;
-        const newMovie = new Movie({ title, description, image, slogan, author, genres, date, runTime, rating });
-        await newMovie.save();
-        res.status(200).send("Movie added");
+        const newMovie = await Movie.create({ title, description, image, slogan, author, genres, date, runTime, rating });
+        res.json(newMovie);
     } catch (error) {
         next(error);
     }
