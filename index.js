@@ -32,7 +32,7 @@ app.get("/getMovieById/:_id",async (req,res,next)=>{
   try {
     const { _id } = req.params
     const movie = await Movie.findById(_id);
-    if(movie == null){
+    if(!movie){
       throw new Error("Movie not found");
     }
     else res.json(movie);
