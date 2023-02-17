@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/Konders/cogitizepractice/issues"
   },
-  "homepage": "https://github.com/Konders/cogitizepractice#readme"
+  "homepage": "https://github.com/Konders/cogitizepractice#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^6.9.1",
+    "require": "^2.4.20"
+  }
 }
