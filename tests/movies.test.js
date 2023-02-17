@@ -26,7 +26,8 @@ describe("Movies API", () => {
         date: new Date(2022, 0, 1, 0, 0, 0, 0).getTime(),
         rating: 5,
         runTime: 200
-      });
+    });
+    movieId = res._body._id;
     expect(res.statusCode).toEqual(200);
     expect(res.body.title).toEqual("test title");
     expect(res.body.description).toEqual("test description");
@@ -36,7 +37,6 @@ describe("Movies API", () => {
     expect(res.body.date).toEqual("2021-12-31T22:00:00.000Z");
     expect(res.body.rating).toEqual(5);
     expect(res.body.runTime).toEqual(200);
-    movieId = res._body._id;
   });
 
   test("should return created movie", async () => {
