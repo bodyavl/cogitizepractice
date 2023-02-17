@@ -17,7 +17,7 @@ router.post("/create", async (req, res, next) => {
 
 router.get('/list', async (req, res, next) => {
     try {
-        const movies = await Movie.find();
+        const movies = await Movie.find().select("_id title image rating");
         if(movies) res.json(movies);
         else throw new Error("No movies found")
     } catch (error) {
