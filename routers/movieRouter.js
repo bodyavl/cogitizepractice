@@ -21,7 +21,7 @@ router.get("/axios/:id", (req, res, next) => {
             })
             .then((result) => 
             {
-                res.send(result.data.title);
+                res.json(result.data);
             })
         }
         else {
