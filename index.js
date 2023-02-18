@@ -1,11 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 const database = require("./database");
 const Movie = require("./database/schemes/movie");
 
-
-const PORT = 3000;
 
 
 const errorHandler = (err, req, res, next) => {
@@ -84,9 +85,10 @@ app.use(errorHandler);
 
 
 app.listen(
-    PORT, 
+    process.env.PORT, 
     (err) => {
+        console.log(process.env.NODE_ENV);
         if(err) console.log(err);
-        else console.log(`Server started on port ${PORT}!`);
+        else console.log(`Server started on port ${process.env.PORT}!`);
     }
 );
