@@ -10,10 +10,11 @@ const Movie = require("./database/schemes/movie");
 
 
 const errorHandler = (err, req, res, next) => {
-    const errMsg = err.message;
+    const msg = err.message;
+    console.log("Error: ", msg);
+
     res.header("Content-Type", "application/json");
-    console.log("Error: ", errMsg);
-    res.status(500).send(errMsg);
+    res.status(500).send(msg);
 }
 
 
@@ -30,7 +31,6 @@ app.get("/getMovie/:id", async (req, res, next) => {
     try {
         const movieId = req.params.id;
         const movie = await Movie.findById(movieId);
-        console.log(movie);
         
         if(movie != null) {
             res.json(movie);
@@ -49,7 +49,6 @@ app.get("/getMovie/:id", async (req, res, next) => {
 app.get("/getMovies", async (req, res, next) => {
     try {
         const moviesList = await Movie.find({});
-        console.log(moviesList);
         res.json(moviesList);
     }
     catch(err) {
@@ -60,16 +59,16 @@ app.get("/getMovies", async (req, res, next) => {
 
 
 app.post("/addMovie", async (req, res, next) => {
-    console.log(req.body);
+    const data = req.body;
     try {
         const newMovie = await Movie.create(
             {
-                title: req.body.title,
-                author: req.body.author,
-                description: req.body.description
+                title: data.title,
+                author: data.author,
+                description: data.description
             }
         );
-        console.log(`Movie ${req.body.title} created: `, newMovie);
+        console.log(`Movie ${data.title} created: `, newMovie);
 
         res.json(newMovie);
     }
