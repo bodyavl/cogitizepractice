@@ -38,7 +38,7 @@ app.use(errorHandler);
 app.listen(
     process.env.PORT, 
     (err) => {
-        console.log(process.env.NODE_ENV);
+        console.log(process.env.NODE_ENV, "started!");
         if(err) console.log(err);
         else console.log(`Server started on port ${process.env.PORT}!`);
     }
