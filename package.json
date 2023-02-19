@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "start:dev": "cross-env NODE_ENV=development node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,8 +19,12 @@
   },
   "homepage": "https://github.com/Konders/cogitizepractice#readme",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongoose": "^6.9.1",
+    "mongoose": "^6.9.2",
     "require": "^2.4.20"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
