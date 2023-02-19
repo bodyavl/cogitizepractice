@@ -7,7 +7,7 @@ app.use(bodyParser.json({ type: 'application/json' }));
 const port = 3000;
  
 function errorTamer (res,req,error){
-res.header("Content-Rype", "application/json");
+res.header("Content-Type", "application/json");
 console.log("Error:", error.message);
 res.status(500).send(error.message);
 }
