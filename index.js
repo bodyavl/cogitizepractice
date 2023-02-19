@@ -1,3 +1,6 @@
+const dotenv = require("dotenv")
+dotenv.config()
+
 const express = require('express')
 const app = express()
 
@@ -56,6 +59,8 @@ app.post('/addMovie', async (req, res, next) => {
         next(error)
     }
 })
+
+//Delete route add TODO
 
 app.use(errorHandler)
 
