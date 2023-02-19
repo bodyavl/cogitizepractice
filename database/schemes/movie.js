@@ -7,7 +7,7 @@ const schema = new Schema({
     rating: Number,
     runtime: Number,
     genre: String, 
-    date: { type: Date, required: false },
+    date: Date
 });
 
 const Movie = mongoose.model("Movie", schema);

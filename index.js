@@ -6,7 +6,7 @@ dotenv.config();
 const database = require("./database");
 const movieRouter = require("./routers/movie");
 app.use(bodyParser.json({type: 'application/json'}));
-const port = 301
+const port = 302
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
