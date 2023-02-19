@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Movie = require("../database/schemes/movie");
-
+const axios= require("axios").default;
 
 router.get('/list', async (req, res, next) => {
     const movie = await Movie.find();
@@ -40,5 +40,13 @@ router.get('/list', async (req, res, next) => {
      next(error);
    }
    });
+
+   axios.get(`https://api.themoviedb.org/3/movie/550?`, {
+    params: {
+      api_key:process.env.TMBD_API_KEY
+    }
+  }).then((response) => {
+    console.log(response.data);
+  })
 
    module.exports = router
