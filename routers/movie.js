@@ -20,16 +20,16 @@ function shuffle(array) {
     return array;
 }
 
-router.get('/addtodb', async (req, res, next) => {
-    try {
-        await Movie.collection.drop();
-        await addMoviesToDatabase();
-        res.status(200).send('OK');
-    } catch (error) {
-        next(error);
-    }
+// router.get('/addtodb', async (req, res, next) => {
+//     try {
+//         await Movie.collection.drop();
+//         await addMoviesToDatabase();
+//         res.status(200).send('OK');
+//     } catch (error) {
+//         next(error);
+//     }
     
-})
+// })
 router.post("/create", async (req, res, next) => {
     try {
         const {
@@ -100,7 +100,7 @@ async function addMoviesToDatabase() {
     for(let i = 1; i < 50; i++) {
         const movieRes = await axios.get('https://api.themoviedb.org/3/discover/movie', {
             params: {
-                api_key: process.env.API_KEY,
+                api_key: process.env.TMDB_API_KEY,
                 with_genres: '28|27|18|35',
                 page: i
             }
@@ -114,7 +114,7 @@ async function addMoviesToDatabase() {
             try {
                 const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
                     params: {
-                        api_key: process.env.API_KEY
+                        api_key: process.env.TMDB_API_KEY
                 }
                 })
                 const { title, poster_path, backdrop_path, vote_average, genres, runtime, tagline, overview, release_date } = response.data;
@@ -139,7 +139,7 @@ async function addMoviesToDatabase() {
         }
         const tvRes = await axios.get('https://api.themoviedb.org/3/discover/tv', {
             params: {
-                api_key: process.env.API_KEY,
+                api_key: process.env.TMDB_API_KEY,
                 with_genres: '28|27|18|35',
                 page: i
             }
@@ -153,7 +153,7 @@ async function addMoviesToDatabase() {
             try {
                 const response = await axios.get(`https://api.themoviedb.org/3/tv/${tvId}`, {
                     params: {
-                        api_key: process.env.API_KEY
+                        api_key: process.env.TMDB_API_KEY
                     }
                 })
                 const { name, poster_path, backdrop_path, vote_average, genres, runtime, tagline, overview, release_date} = response.data;
