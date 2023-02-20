@@ -14,6 +14,7 @@ describe("Suggest API", () => {
         expect(res.body).toHaveLength(8);
         movieId = res.body[0]._id;
     });
+    
     test("Should return movie by id in MongoDB", async() => {
         const res = await request(app).get(`/movie/${movieId}`);
 

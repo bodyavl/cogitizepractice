@@ -2,14 +2,12 @@ const dotenv = require('dotenv');
 dotenv.config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const db = require("./db");
-const Movie = require("./db/models/movie");
-const movieRouter = require("./routers/movie.js")
+const { router, runBackgroundFetching } = require('./routers/movie');
 
 const app = express();
 
 app.use(bodyParser.json({ type: "application/json" }));
-app.use('/movie', movieRouter);
+app.use('/movie', router);
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
@@ -23,21 +21,5 @@ app.use(errorHandler);
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("On port",port);
+  runBackgroundFetching();
 });
-
-
-function testDelay(arg){
-  console.log("arg: ", arg++);
-  if(arg + 1 > 5) return;
-  setTimeout(testDelay, 1000, arg)
-}
-
-setTimeout(testDelay, 1000, 0);
-
-let intervalIterations = 0;
-function testDelay(){
-  console.log("argSetInterval: ", intervalIterations++);
-  if(intervalIterations + 1 > 5) clearInterval(setIntervalID);
-
-}
-let setIntervalID = setInterval(testDelay, 1000);

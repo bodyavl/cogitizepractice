@@ -1,63 +1,30 @@
-const express = require("express");
 const dotenv = require("dotenv");
-const axios = require("axios").default;
 dotenv.config();
+
+const express = require("express");
+const axios = require("axios").default;
 const router = express.Router();
 
 const Movie = require("../db/models/movie");
+const { shuffle } = require("../utils");
 
-function shuffle(array) {
-  let currentIndex = array.length,
-    randomIndex;
-
-  while (currentIndex != 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-  return array;
-}
-
-// router.get('/addtodb', async (req, res, next) => {
-//     try {
-//         await Movie.collection.drop();
-//         await addMoviesToDatabase();
-//         res.status(200).send('OK');
-//     } catch (error) {
-//         next(error);
-//     }
-
-// })
 router.post("/create", async (req, res, next) => {
   try {
-    const {
-      title,
-      description,
-      type,
-      poster,
-      backdrop,
-      tagline,
-      genres,
-      date,
-      runtime,
-      rating,
-    } = req.body;
-    const newMovie = await Movie.create({
-      title,
-      description,
-      type,
-      poster,
-      backdrop,
-      tagline,
-      genres,
-      date,
-      runtime,
-      rating,
-    });
+    const movieRequest = {
+      title: req.body.title,
+      description: req.body.description,
+      type: req.body.type,
+      poster: req.body.poster,
+      poster: req.body.poster,
+      backdrop: req.body.backdrop,
+      tagline: req.body.tagline,
+      genres: req.body.genres,
+      date: req.body.date,
+      runtime: req.body.runtime,
+      rating: req.body.rating,
+    };
+
+    const newMovie = await Movie.create(movieRequest);
     res.status(200).send(newMovie);
   } catch (error) {
     next(error);
@@ -71,15 +38,18 @@ router.get("/list", async (req, res, next) => {
       const movies = await Movie.find().select(
         "_id title poster rating genres"
       );
-      shuffle(movies);
-      if (movies) res.status(200).json(movies.slice(0, 8));
+
+      const shuffledMovies = shuffle(movies);
+
+      if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
       else throw new Error("No movies found");
     } else {
       const movies = await Movie.find({
         genres: { $elemMatch: { name: genre } },
       }).select("_id title poster rating genres");
-      shuffle(movies);
-      if (movies) res.status(200).json(movies.slice(0, 8));
+
+      const shuffledMovies = shuffle(movies);
+      if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
       else throw new Error("No movies found");
     }
   } catch (error) {
@@ -91,6 +61,7 @@ router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const movie = await Movie.findById(id).select("-__v -_id");
+
     if (movie) res.status(200).json(movie);
     else throw new Error("Movie was not found");
   } catch (error) {
@@ -220,5 +191,4 @@ function runBackgroundFetching() {
   addMoviesToDatabase(pageIterator++);
   setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIterator);
 }
-runBackgroundFetching();
-module.exports = router;
+module.exports = { router, runBackgroundFetching };
