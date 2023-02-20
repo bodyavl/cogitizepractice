@@ -12,12 +12,9 @@ router.param("id", function( req, res, next, id ) {
 router.get("/all", async (req, res, next) => {
     try {
       const allmovies = await Movie.find();
-      if(!allmovies){
-        throw new Error("There are no movies");
-      }
-      else{
+      if(!allmovies)
+        throw new Error("There are no movies");     
         res.json(allmovies);
-      }
     } catch (error) {
       next(error);
     }
@@ -44,12 +41,9 @@ router.get("/:id", async (req, res, next) => {
     try {
       const { id } = req.params
       const movieid = await Movie.findById(id);
-      if(!movieid){
+      if(!movieid)
         throw new Error("There is no movie with this id");
-      }
-      else{
         res.json(movieid);
-      }
     } catch (error) {
       next(error);
     }
