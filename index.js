@@ -1,15 +1,14 @@
 const dotenv = require('dotenv');
 dotenv.config();
 const express = require("express");
+require("./db")
 const bodyParser = require("body-parser");
-const db = require("./db");
-const Movie = require("./db/models/movie");
-const movieRouter = require("./routers/movie.js")
+const { router } = require('./routers/movie');
 
 const app = express();
 
 app.use(bodyParser.json({ type: "application/json" }));
-app.use('/movie', movieRouter);
+app.use('/movie', router);
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
@@ -20,6 +19,7 @@ function errorHandler(error, req, res, next) {
 
 app.use(errorHandler);
 
-app.listen(3000, () => {
-  console.log("On port 3000");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log("On port", port);
 });

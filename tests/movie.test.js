@@ -23,6 +23,7 @@ describe("Suggest API", () => {
 
     test("Should add movie to MongoDB", async () => {
         const res = await request(app).post("/movie/create").set("Accept", "application/json").send({
+            id: 1,
             title: "test title",
             description: "test desc",
             type: "Movie",
@@ -36,6 +37,7 @@ describe("Suggest API", () => {
         })
         
         expect(res.statusCode).toEqual(200);
+        expect(res.body.id).toEqual(1)
         expect(res.body.title).toEqual("test title")
         expect(res.body.description).toEqual("test desc")
         expect(res.body.type).toEqual("Movie")

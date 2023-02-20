@@ -1,17 +1,21 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const genreSchema = new Schema({
-  name: String
-}, { _id: false });
+const genreSchema = new Schema(
+  {
+    name: String,
+  },
+  { _id: false }
+);
 
 const movieSchema = new Schema({
+  id: { type: Number, required: true, unique: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
   type: {
     type: String,
-    enum: ['Movie', 'TV show'],
-    required: true
+    enum: ["Movie", "TV show"],
+    required: true,
   },
   tagline: String,
   poster: String,
@@ -19,7 +23,7 @@ const movieSchema = new Schema({
   genres: [genreSchema],
   date: Date,
   rating: Number,
-  runtime: Number
+  runtime: Number,
 });
 
 const Movie = mongoose.model("Movie", movieSchema);
