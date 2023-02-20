@@ -5,6 +5,27 @@ const axios = require("axios").default;
 
 const Movie = require("../database/schemes/movie");
 
+router.get("/axios/:id", (req, res, next) => {
+  try {
+    const movieId = Number(req.params.id);
+    if (movieId > 61 && movieId < 958) { //idk why
+      axios
+        .get(`https://api.themoviedb.org/3/movie/${movieId}`, {
+          params: {
+            api_key: process.env.TMDB_API_KEY,
+          },
+        })
+        .then((result) => {
+          res.json(result.data);
+        });
+    } else {
+      throw new Error("Incorrect movie id!");
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get("/list", async (req, res, next) => {
   try {
     const moviesList = await Movie.find({});
@@ -52,15 +73,5 @@ router.post("/add", async (req, res, next) => {
     next(error);
   }
 });
-
-// axios
-//   .get(`https://api.themoviedb.org/3/movie/550`, {
-//     params: {
-//       api_key: process.env.TMDB_API_KEY,
-//     },
-//   })
-//   .then((response) => {
-//     console.log(response.data);
-//   });
 
 module.exports = router;
