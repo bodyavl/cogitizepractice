@@ -55,32 +55,26 @@ router.get("/:id", async (req, res, next) => {
     }
 });
 
-router.get("/TMDB/:id", (req, res, next) => {
+router.get("/TMDB/:id", async (req, res, next) => {
     try {
         const TMDBmovieID = req.params.id;
         if(TMDBmovieID == "day") {
-            axios.get(`https://api.themoviedb.org/3/trending/movie/${TMDBmovieID}`, 
-            {
-                params: {
-                  api_key:process.env.TMDB_API_KEY
-                }
-            })
-            .then((response) => 
-            {
-                res.json(response.data);
-            })
+              const response = await axios.get(`https://api.themoviedb.org/3/trending/movie/${TMDBmovieID}`, 
+              {
+                  params: {
+                    api_key:process.env.TMDB_API_KEY
+                  }
+              });
+              res.json(response.data);
         }
         else if (TMDBmovieID == "week"){
-            axios.get(`https://api.themoviedb.org/3/trending/movie/${TMDBmovieID}`, 
-            {
-                params: {
-                  api_key:process.env.TMDB_API_KEY
-                }
-            })
-            .then((response) => 
-            {
-                res.json(response.data);
-            })
+              const response = await axios.get(`https://api.themoviedb.org/3/trending/movie/${TMDBmovieID}`, 
+              {
+                  params: {
+                    api_key:process.env.TMDB_API_KEY
+                  }
+              });
+              res.json(response.data);
         }
         else {
             throw new Error("Write 'day' or 'week'!");
@@ -90,15 +84,5 @@ router.get("/TMDB/:id", (req, res, next) => {
         next(error);
     }
 });
-
-/*axios.get(`https://api.themoviedb.org/3/trending/movie/week`, {
-    params: {
-      api_key:process.env.TMDB_API_KEY
-    }
-})
-
-.then(response => {
-    console.log(response.data);
-})*/
 
 module.exports = router
