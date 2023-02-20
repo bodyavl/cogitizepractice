@@ -1,4 +1,6 @@
 const express = require("express");
+
+const database = require("../database");
 const Movie = require("../database/schemes/movie");
 
 const axios = require("axios").default;
@@ -9,24 +11,17 @@ const router = express.Router();
 
 
 
-router.get("/axios/:id", (req, res, next) => {
+router.get("/axios/:id", async (req, res, next) => {
     try {
         const movieId = Number(req.params.id);
-        if(movieId > 61 && movieId < 958) {
-            axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, 
-            {
-                params: {
-                    api_key: process.env.TMDB_API_KEY
-                }
-            })
-            .then((result) => 
-            {
-                res.json(result.data);
-            })
-        }
-        else {
-            throw new Error("Incorrect movie id!");
-        }
+        const axiosMovie = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, 
+        {
+            params: {
+                api_key: process.env.TMDB_API_KEY
+            }
+        })
+        console.log(axiosMovie);
+        res.json(axiosMovie.data);            
     }
     catch(err) {
         next(err);
@@ -64,7 +59,7 @@ router.get("/:id", async (req, res, next) => {
         const movieId = req.params.id;
         const movie = await Movie.findById(movieId);
         
-        if(movie != null) {
+        if(movie) {
             res.json(movie);
         }
         else {

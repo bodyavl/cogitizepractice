@@ -1,11 +1,9 @@
-const express = require("express");
-// const bodyParser = require("body-parser");
-
 const dotenv = require("dotenv");
 dotenv.config();
 
-const database = require("./database");
-const Movie = require("./database/schemes/movie");
+
+const express = require("express");
+
 
 const movieRouter = require("./routers/movieRouter");
 
@@ -32,6 +30,7 @@ app.use("/movie", movieRouter);
 
 
 app.use(errorHandler);
+
 
 
 
