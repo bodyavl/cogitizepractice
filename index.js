@@ -9,7 +9,7 @@ app.use(bodyparser.json())
 
 const database = require("./database")
 
-const Movie = require("./database/schemes/movie")
+const movieRouter = require("./routes/movie")
 
 const port = 3000
 
@@ -19,46 +19,7 @@ const errorHandler = (error, req, res, next) => {
     res.status(500).send(error.message)
 }
 
-app.get('/movie/:id', async (req, res, next) => {
-    try {
-        const movieId = req.params.id;
-        const movie = await Movie.findById(movieId)
-        console.log(movie)
-        res.json(movie)
-    }
-    catch (error) {
-        next(error)
-    }
-})
-
-app.get('/movies', async (req, res, next) => {
-    try {
-        const moviesList = await Movie.find({});
-        console.log(moviesList)
-        res.json(moviesList)
-    }
-    catch (error) {
-        next(error)
-    }
-})
-
-app.post('/addMovie', async (req, res, next) => {
-    try {
-        const newMovie = await Movie.create(
-            {
-                title: req.body.title,
-                author: req.body.author,
-                description: req.body.description
-            }
-        )
-        console.log('Movie has been created: ', newMovie)
-
-        res.json(newMovie)
-    }
-    catch (error) {
-        next(error)
-    }
-})
+app.use("/movie", movieRouter)
 
 //Delete route add TODO
 
