@@ -25,14 +25,16 @@ router.get('/list', async (req, res, next) => {
  router.post('/createMovie', async (req, res, next) => {
    try{
     console.log("Create movie request",req.body);
-     const {title, author, description, country, rating, genre} = req.body;
+     const {title, author, description, country, rating, genre,backdrop,logo} = req.body;
      const movie =  await Movie.create ({
        title,
        author,
        description,
        country,
        rating, 
-       genre
+       genre,
+       backdrop,
+       logo,
      });
      console.log("Movie created :", movie);
      res.json(movie);

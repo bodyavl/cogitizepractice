@@ -8,6 +8,8 @@ const blogSchema = new Schema({
   country: String,
   rating: Number,
   genre: String, 
+  backdrop: String,
+  logo: String,
   date: { type: Date, required: false },
 });
 const Movie = mongoose.model('Movie', blogSchema);
