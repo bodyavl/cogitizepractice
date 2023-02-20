@@ -6,6 +6,7 @@ const genreSchema = new Schema({
 }, { _id: false });
 
 const movieSchema = new Schema({
+  id: { type: Number, required: true, unique: true},
   title: { type: String, required: true },
   description: { type: String, required: true },
   type: {

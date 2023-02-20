@@ -21,5 +21,22 @@ function errorHandler(error, req, res, next) {
 app.use(errorHandler);
 
 app.listen(3000, () => {
-  console.log("On port 3000");
+  // console.log("On port 3000");
 });
+
+
+function testDelay(arg){
+  console.log("arg: ", arg++);
+  if(arg + 1 > 5) return;
+  setTimeout(testDelay, 1000, arg)
+}
+
+setTimeout(testDelay, 1000, 0);
+
+let intervalIterations = 0;
+function testDelay(){
+  console.log("argSetInterval: ", intervalIterations++);
+  if(intervalIterations + 1 > 5) clearInterval(setIntervalID);
+
+}
+let setIntervalID = setInterval(testDelay, 1000);
