@@ -112,7 +112,7 @@ async function addMoviesToDatabase(pageIteration = 1) {
         } = response.data;
         if (overview) {
           const newMovie = await Movie.create({
-            id,
+            id: `${id}m`,
             title,
             type: "Movie",
             tagline,
@@ -165,7 +165,7 @@ async function addMoviesToDatabase(pageIteration = 1) {
         } = response.data;
         if (overview) {
           const newTV = await Movie.create({
-            id,
+            id: `${id}tv`,
             title: name,
             type: "TV show",
             tagline,
