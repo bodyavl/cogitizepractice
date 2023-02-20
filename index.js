@@ -3,7 +3,7 @@ dotenv.config();
 const express = require("express");
 require("./db")
 const bodyParser = require("body-parser");
-const { router } = require('./routers/movie');
+const { router, runBackgroundFetching } = require('./routers/movie');
 
 const app = express();
 
@@ -22,4 +22,5 @@ app.use(errorHandler);
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("On port", port);
+  runBackgroundFetching();
 });
