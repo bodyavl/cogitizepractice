@@ -38,7 +38,7 @@ it("should create a movie", async()=>{
 
 it("should return created movie", async()=>{
     const res = await request(app).get(`/movie/${movieId}`);
-    console.log("Result:", res);
+   
    expect(res.statusCode).toEqual(200);
    expect(res.body).toHaveProperty("title");
    expect(res.body).toHaveProperty("author");

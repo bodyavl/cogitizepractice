@@ -13,7 +13,7 @@ router.get('/list', async (req, res, next) => {
      const movie = await Movie.findById(id);
    
      if (!movie){
-       throw new Error("Not Found");
+        throw new Error("Not Found");
      } else {
        res.json(movie);
      }
