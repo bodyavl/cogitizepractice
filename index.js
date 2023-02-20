@@ -20,8 +20,9 @@ function errorHandler(error, req, res, next) {
 
 app.use(errorHandler);
 
-app.listen(3000, () => {
-  // console.log("On port 3000");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log("On port",port);
 });
 
 
