@@ -8,19 +8,15 @@ const Movie = require("../database/schemes/movie");
 router.get("/axios/:id", (req, res, next) => {
   try {
     const movieId = Number(req.params.id);
-    if (movieId > 61 && movieId < 958) { //idk why
-      axios
-        .get(`https://api.themoviedb.org/3/movie/${movieId}`, {
-          params: {
-            api_key: process.env.TMDB_API_KEY,
-          },
-        })
-        .then((result) => {
-          res.json(result.data);
-        });
-    } else {
-      throw new Error("Incorrect movie id!");
-    }
+    axios
+      .get(`https://api.themoviedb.org/3/movie/${movieId}`, {
+        params: {
+          api_key: process.env.TMDB_API_KEY,
+        },
+      })
+      .then((result) => {
+        res.json(result.data);
+      });
   } catch (err) {
     next(err);
   }
