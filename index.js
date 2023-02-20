@@ -6,13 +6,17 @@ dotenv.config();
 const database = require("./database");
 const movieRouter = require("./routers/movie");
 app.use(bodyParser.json({type: 'application/json'}));
-const port = 303
+const port = 305
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
   console.log("Error occured:", error.message);
   res.status(500).send(error.message);
 }
+
+process.on('uncaughtException', function (err) {
+  console.log(err);
+}); 
 
 app.use("/movie", movieRouter);
 

@@ -39,7 +39,7 @@ router.post("/add", async (req, res, next) => {
       next(error);
     }
 });
-  
+
 router.get("/:id", async (req, res, next) => {
     try {
       const { id } = req.params
@@ -55,7 +55,43 @@ router.get("/:id", async (req, res, next) => {
     }
 });
 
-axios.get(`https://api.themoviedb.org/3/movie/550`, {
+router.get("/TMDB/:id", (req, res, next) => {
+    try {
+        const TMDBmovieID = req.params.id;
+        if(TMDBmovieID == "day") {
+            axios.get(`https://api.themoviedb.org/3/trending/movie/${TMDBmovieID}`, 
+            {
+                params: {
+                  api_key:process.env.TMDB_API_KEY
+                }
+            })
+            .then((response) => 
+            {
+                res.json(response.data);
+            })
+        }
+        else if (TMDBmovieID == "week"){
+            axios.get(`https://api.themoviedb.org/3/trending/movie/${TMDBmovieID}`, 
+            {
+                params: {
+                  api_key:process.env.TMDB_API_KEY
+                }
+            })
+            .then((response) => 
+            {
+                res.json(response.data);
+            })
+        }
+        else {
+            throw new Error("Write 'day' or 'week'!");
+        }
+    }
+    catch(error) {
+        next(error);
+    }
+});
+
+/*axios.get(`https://api.themoviedb.org/3/trending/movie/week`, {
     params: {
       api_key:process.env.TMDB_API_KEY
     }
@@ -63,10 +99,6 @@ axios.get(`https://api.themoviedb.org/3/movie/550`, {
 
 .then(response => {
     console.log(response.data);
-})
-
-.catch(error => {
-    console.error(error);
-})
+})*/
 
 module.exports = router

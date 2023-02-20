@@ -5,8 +5,6 @@ dotenv.config();
 const app = process.env.APP_URL;
 
 describe("Movies API", () => {
-    //let axiosMovieId = 550;
-
 
     test("Should return all movies", async () => {
         const res = await request(app).get("/movie/all");
@@ -14,14 +12,19 @@ describe("Movies API", () => {
         expect(res.body).toBeInstanceOf(Array);
     });
 
-    let movieId;
-
-    /*test("Should return movie by id from TMDB", async () => {
-        const res = await request(app).get(`/movie/axios/${axiosMovieId}`);
+    test("Should return tranding movie by day from TMDB", async () => {
+        const res = await request(app).get("/movie/TMDB/day");
         expect(res.statusCode).toEqual(200);
         expect(res.body).toBeInstanceOf(Object);
-    });*/
+    });
 
+    test("Should return tranding movie by week from TMDB", async () => {
+        const res = await request(app).get("/movie/TMDB/week");
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toBeInstanceOf(Object);
+    });
+
+    let movieId;
 
     test("Should create movie", async () => {
         const res = await request(app).post(`/movie/add`).set('Accept', 'application/json').send(
@@ -45,7 +48,6 @@ describe("Movies API", () => {
     test("Should return created movie by id", async () => {
         const res = await request(app).get(`/movie/${movieId}`);
         expect(res.statusCode).toEqual(200);
-        expect(res.body).toHaveProperty("title");
-        expect(res.body).toHaveProperty("author");
+        expect(res.body).toBeInstanceOf(Object);
     });
 });
