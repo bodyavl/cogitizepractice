@@ -8,7 +8,7 @@ const database = require("./database/index");
 const app = express()
 app.use(bodyParser.json({ type: 'application/json' }))
 
-const port = 3000
+const port = process.env.PORT;
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
@@ -25,3 +25,8 @@ app.listen(port, () => {
   console.log(process.env.node_env, "started")
   console.log(`Example app listening on port ${port}`)
 });
+
+function testDelay(arg) {
+  console.log("arg ", arg);
+}
+

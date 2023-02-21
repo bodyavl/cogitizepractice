@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "start": "cross-env NODE_ENV=production nodemon node index.js",
-    "start:dev": "cross-env NODE_ENV=development nodemon node index.js"
+    "start:dev": "cross-env NODE_ENV=development nodemon node index.js",
+    "start-parse:dev": "cross-env NODE_ENV=development nodemon node parser.js"
   },
   "repository": {
     "type": "git",

@@ -1,13 +1,21 @@
+const { request } = require('express');
 const express = require('express');
 const router = express.Router();
 const Movie = require("../database/schemas/movie.js");
-const axios = require("axios").default;
+const getRandomArbitrary = require('../util/random.js');
+const shuffle = require('../util/shuffle.js');
 
 router.get("/list", async (req, res, next) => {
     try {
         // const movies = await Movie.find().select("-description -v -title");
-        const movies = await Movie.find().select("_id title rating author");
-        res.json(movies);
+        const filmscounts = await Movie.count();
+        console.log(filmscounts);
+        const { count = 10 } = req.query;
+        const skip = getRandomArbitrary(0, filmscounts - count);
+        const movies = await Movie.find({}, "id", { skip: skip, limit: count }).select("_id title rating author");
+        const shuffledMovies = shuffle(movies);
+        console.log(req.query);
+        res.json(shuffledMovies);
     } catch (error) {
         next(error);
     }
@@ -51,14 +59,5 @@ router.post("/create", async (req, res, next) => {
         next(error);
     }
 });
-
-axios.get(`https://api.themoviedb.org/3/movie/550?`, {
-    params: {
-        api_key: process.env.TMBD_API_KEY
-    }
-}).then((response) => {
-    // console.log(response.data);
-    console.log(response.config);
-})
 
 module.exports = router

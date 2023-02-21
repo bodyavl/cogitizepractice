@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const schema = new Schema({
+    id: { type: Number, unique: true },
     title: String, // String is shorthand for {type: String}
-    author: String,
     description: String,
-    genre: String,
+    genre: {type: Array},
     rating: Number,
     date: { type: Date, required: false },
 });
