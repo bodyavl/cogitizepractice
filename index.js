@@ -7,6 +7,7 @@ const movieRouter = require("./routers/movie");
 const database = require("./database/index");
 
 const app = express()
+app.use(cors());
 app.use(bodyParser.json({ type: 'application/json' }))
 
 const port = process.env.PORT;
@@ -19,7 +20,7 @@ function errorHandler(error, req, res, next) {
 }
 
 app.use("/movie", movieRouter);
-app.use(cors());
+
 app.use(errorHandler);
 
 app.listen(port, () => {
