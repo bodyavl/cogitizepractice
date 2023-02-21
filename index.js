@@ -5,7 +5,7 @@ dotenv.config();
 const express = require("express");
 
 
-const movieRouter = require("./routers/movieRouter");
+const { movieRouter, runBackgroundFetching } = require("./routers/movieRouter");
 
 
 
@@ -40,5 +40,6 @@ app.listen(
         console.log(process.env.NODE_ENV, "started!");
         if(err) console.log(err);
         else console.log(`Server started on port ${process.env.PORT}!`);
+        // runBackgroundFetching();
     }
 );

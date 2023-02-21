@@ -3,11 +3,14 @@ const express = require("express");
 const database = require("../database");
 const Movie = require("../database/schemes/movie");
 
+
 const axios = require("axios").default;
 
 
 
+
 const router = express.Router();
+
 
 
 
@@ -19,9 +22,28 @@ router.get("/axios/:id", async (req, res, next) => {
             params: {
                 api_key: process.env.TMDB_API_KEY
             }
-        })
-        console.log(axiosMovie);
+        });
         res.json(axiosMovie.data);            
+    }
+    catch(err) {
+        next(err);
+    }
+});
+
+
+router.get("/shuffle/:amount", async (req, res, next) => {
+    const moviesAmount = req.params.amount;
+    let moviesToReturn = [];
+    try {
+        const idsList = await Movie.find({}).select("id");
+        const idsListLen = idsList.length;
+
+        for(let index = 0; index < moviesAmount; index++) {
+            const randMovieIndex = Math.floor(Math.random() * idsListLen);
+            const movie = await Movie.findOne( { id:idsList[randMovieIndex].id } );
+            moviesToReturn.push(movie);
+        }
+        res.json(moviesToReturn);
     }
     catch(err) {
         next(err);
@@ -32,6 +54,7 @@ router.get("/axios/:id", async (req, res, next) => {
 router.get("/list", async (req, res, next) => {
     try {
         const moviesList = await Movie.find({});
+        console.log(moviesList.length);
         res.json(moviesList);
     }
     catch(err) {
@@ -44,7 +67,7 @@ router.get("/delDB", async (req, res, next) => {
     try {
         const movies = await Movie.find({});
         for(let movie of movies) {
-            await Movie.findByIdAndDelete(movie.id);
+            await Movie.findByIdAndDelete(movie._id);
         }
         res.sendStatus(200);
     }
@@ -57,7 +80,7 @@ router.get("/delDB", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
     try {
         const movieId = req.params.id;
-        const movie = await Movie.findById(movieId);
+        const movie = await Movie.findOne( {id: movieId});
         
         if(movie) {
             res.json(movie);
@@ -73,14 +96,22 @@ router.get("/:id", async (req, res, next) => {
 });
 
 
+
 router.post("/add", express.json(), async (req, res, next) => {
     const data = req.body;
     try {
         const newMovie = await Movie.create(
             {
+                id: data.id,
                 title: data.title,
-                author: data.author,
-                description: data.description
+                description: data.overview || data.title,
+                genres: data.genres,
+                tagline: data.tagline,
+                backdrop: `https://image.tmdb.org/t/p/original${data.backdrop_path}`,
+                poster: `https://image.tmdb.org/t/p/original${data.poster_path}`,
+                rating: data.vote_average,
+                runtime: data.runtime,
+                data: data.release_date
             }
         );
         console.log(`Movie ${data.title} created: `, newMovie);
@@ -94,5 +125,79 @@ router.post("/add", express.json(), async (req, res, next) => {
 
 
 
+let FETCHINGDELAY = 5000;
+const fillDB = async (fillIteration) => {
+    const pagesAmount = 10;
+    console.log("New chank");
 
-module.exports = router;
+    for(let pageIndex = 1 + pagesAmount*fillIteration; pageIndex <= pagesAmount + pagesAmount*fillIteration; pageIndex++) {
+
+        let tmdbMoviesList;
+        try {
+            tmdbMoviesList = await axios.get("https://api.themoviedb.org/3/discover/movie", 
+            {
+                params: {
+                    api_key: process.env.TMDB_API_KEY,
+                    with_genres: "18|27|28|35",
+                    page: pageIndex * fillIteration
+                }
+            });
+        }
+        catch(err) {
+            console.log(err.message);
+        }
+
+        if(typeof tmdbMoviesList == "undefined") return;
+        for(let movieData of tmdbMoviesList.data.results) {
+            try {
+                let movie = await axios.get(`https://api.themoviedb.org/3/movie/${movieData.id}`, 
+                {
+                    params: {
+                        api_key: process.env.TMDB_API_KEY
+                    }
+                });
+
+                let genres = movie.data.genres[0].name;
+                for(let genreIndex = 1; genreIndex < movie.data.genres.length; genreIndex++) {
+                    genres += `|${movie.data.genres[genreIndex].name}`;
+                }
+                
+                const newMovie = await Movie.create(
+                    {
+                        id: movie.data.id,
+                        title: movie.data.title,
+                        description: movie.data.overview || movie.data.title,
+                        genres: genres,
+                        tagline: movie.data.tagline,
+                        backdrop: `https://image.tmdb.org/t/p/original${movie.data.backdrop_path}`,
+                        poster: `https://image.tmdb.org/t/p/original${movie.data.poster_path}`,
+                        rating: movie.data.vote_average,
+                        runtime: movie.data.runtime,
+                        data: movie.data.release_date
+                    }
+                );
+                console.log("Film added", movie.data.title);
+            }
+            catch(err) {
+                console.log(err.message);
+            }
+
+        }
+
+    }
+
+    if(fillIteration > 50) return;
+    setTimeout(fillDB, FETCHINGDELAY, ++fillIteration);
+
+}
+
+const runBackgroundFetching = () => {
+    let fillIteration = 0;
+    fillDB(fillIteration++);
+    setTimeout(fillDB, FETCHINGDELAY, fillIteration);
+}
+
+
+
+
+module.exports = { movieRouter: router, runBackgroundFetching };
