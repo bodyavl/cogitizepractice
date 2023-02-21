@@ -5,20 +5,20 @@ const axios = require("axios").default;
 
 const Movie = require("../database/schemes/movie");
 
-router.get("/axios/:id", (req, res, next) => {
+router.get("/axios/:id", async (req, res, next) => {
   try {
     const movieId = Number(req.params.id);
-    axios
-      .get(`https://api.themoviedb.org/3/movie/${movieId}`, {
+    const movie = await axios.get(
+      `https://api.themoviedb.org/3/movie/${movieId}`,
+      {
         params: {
           api_key: process.env.TMDB_API_KEY,
         },
-      })
-      .then((result) => {
-        res.json(result.data);
-      });
-  } catch (err) {
-    next(err);
+      }
+    );
+    res.json(movie);
+  } catch (error) {
+    next(error);
   }
 });
 
