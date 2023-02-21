@@ -6,6 +6,7 @@ const app = process.env.APP_URL;
 
 describe("Suggest API", () => {
     let movieId;
+    jest.setTimeout(60000)
     test("Should return 8 movies from MongoDB", async() => {
         const res = await request(app).get("/movie/list");
 
@@ -23,7 +24,7 @@ describe("Suggest API", () => {
 
     test("Should add movie to MongoDB", async () => {
         const res = await request(app).post("/movie/create").set("Accept", "application/json").send({
-            id: 1,
+            id: "1m",
             title: "test title",
             description: "test desc",
             type: "Movie",
@@ -37,7 +38,7 @@ describe("Suggest API", () => {
         })
         
         expect(res.statusCode).toEqual(200);
-        expect(res.body.id).toEqual(1)
+        expect(res.body.id).toEqual("1m");
         expect(res.body.title).toEqual("test title")
         expect(res.body.description).toEqual("test desc")
         expect(res.body.type).toEqual("Movie")
