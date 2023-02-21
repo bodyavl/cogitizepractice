@@ -8,7 +8,7 @@ const shuffle = require('../util/shuffle.js');
 router.get("/list", async (req, res, next) => {
     try {
         // const movies = await Movie.find().select("-description -v -title");
-        const filmscounts = 1961; // await Movie.count();
+        const filmscounts = await Movie.count();
         console.log(filmscounts);
         const { count = 10 } = req.query;
         const skip = getRandomArbitrary(0, filmscounts - count);
