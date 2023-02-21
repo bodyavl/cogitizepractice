@@ -1,4 +1,3 @@
-const { response } = require('express');
 const express = require('express');
 const router = express.Router();
 const axios = require('axios').default;
@@ -14,20 +13,18 @@ const Movie = require("../database/schemes/movie");
     }
   });
 
-  router.get("/getMovieFromTMDB/:id", (req, res, next) => {
+  router.get("/getMovieFromTMDB/:id", async (req, res, next) => {
     try {
         const movieId = req.params.id;
         if(movieId > 62 && movieId < 958) {
-            axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, 
+            const axiosMovie = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, 
             {
                 params: {
-                  api_key:process.env.TMBD_API_KEY
+                  api_key:process.env.TMDB_API_KEY
                 }
             })
-            .then((response) => 
-            {
-                res.json(response.data);
-            })
+            console.log(axiosMovie);
+            res.json(axiosMovie.data);
         }
         else {
             throw new Error("Movie by id not found");
@@ -72,7 +69,7 @@ const Movie = require("../database/schemes/movie");
 
   axios.get(`https://api.themoviedb.org/3/movie/550`, {
     params: {
-      api_key:process.env.TMBD_API_KEY,
+      api_key:process.env.TMDB_API_KEY,
     }
   }).then((response) => {
     console.log(response.data);
