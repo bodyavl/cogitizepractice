@@ -1,14 +1,29 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+const genreSchema = new Schema(
+  {
+    name: String,
+  },
+  { _id: false }
+);
+
 const schema = new Schema({
-    title: String,
+    id: { type: String, required: true, unique: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  type: {
     type: String,
-    time: Number,
-    genres: String, 
-    author: String,
-    description: String,
-    date: { type: Date, required: false },
+    enum: ["Movie", "TV show"],
+    required: true,
+  },
+  tagline: String,
+  poster: String,
+  backdrop: String,
+  genres: [genreSchema],
+  date: Date,
+  rating: Number,
+  runtime: Number,
 });
 
 const Movie = mongoose.model("Movie", schema);

@@ -1,51 +1,52 @@
-const request = require("supertest");
-const dotenv = require("dotenv");
+const request = require('supertest');
+const dotenv = require('dotenv');
 dotenv.config();
 
 
 const app = process.env.APP_URL;
 console.log("app",app)
 describe("Movies API",()=>{
-    test("should return all movies",async()=>{
+    let movieId  = "63f52090bb8944b245cf824a";
+    jest.setTimeout(60000)
+    test("Should return 8 movies from MongoDB", async() => {
         const res = await request(app).get("/movie/list");
         expect(res.statusCode).toEqual(200);
         expect(res.body).toBeInstanceOf(Array);
+        expect(res.body).toHaveLength(8);
+        movieId = res.body[0]._id;
     });
-
-    test("Should return movie by id from TMDB", async () => {
-        const res = await request(app).get(`/movie/getMovieFromTMDB/550`);
+    test("Should return movie by id in MongoDB", async() => {
+        const res = await request(app).get(`/movie/${movieId}`);
         expect(res.statusCode).toEqual(200);
         expect(res.body).toBeInstanceOf(Object);
     });
 
-    let movieId;
-    test("should create a movie", async () => {
-        const res = await request(app).post("/movie/create").send({
+    test("Should add movie to MongoDB", async () => {
+        const res = await request(app).post("/movie/create").set("Accept", "application/json").send({
+            id: "79518009m",
             title: "test title",
-            type: "test type",
-            time: 150,
-            genres: "test genres", 
-            author: "test author",
-            description: "test description",
-        });
+            description: "test desc",
+            type: "Movie",
+            poster: "test poster",
+            backdrop: "test backdrop",
+            tagline: "test tagline",
+            genres: [{name: "Action"}, {name: "Drama"}],
+            date: undefined,
+            runtime: 100,
+            rating: 5,
+        })
         expect(res.statusCode).toEqual(200);
-        expect(res.body.title).toEqual("test title");
-        expect(res.body.type).toEqual("test type");
-        expect(res.body.time).toEqual(150);
-        expect(res.body.genres).toEqual("test genres");
-        expect(res.body.author).toEqual("test author");
-        expect(res.body.description).toEqual("test description");
-        movieId = res.body._id;
-    });
-
-    test("should return created movie", async () => {
-        const res = await request(app).get(`/movie/${movieId}`);
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toHaveProperty("title");
-        expect(res.body).toHaveProperty("type");
-        expect(res.body).toHaveProperty("time");
-        expect(res.body).toHaveProperty("genres");
-        expect(res.body).toHaveProperty("author");
-        expect(res.body).toHaveProperty("description");
+        expect(res.body.id).toEqual("79518009m");
+        expect(res.body.title).toEqual("test title")
+        expect(res.body.description).toEqual("test desc")
+        expect(res.body.type).toEqual("Movie")
+        expect(res.body.poster).toEqual("test poster")
+        expect(res.body.backdrop).toEqual("test backdrop")
+        expect(res.body.tagline).toEqual("test tagline")
+        expect(res.body.genres).toBeInstanceOf(Array)
+        expect(res.body.genres).toEqual([{name: "Action"}, {name: "Drama"}])
+        expect(res.body.date).toEqual(undefined)
+        expect(res.body.runtime).toEqual(100)
+        expect(res.body.rating).toEqual(5)
     })
 });

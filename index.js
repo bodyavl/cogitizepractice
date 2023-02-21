@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const database = require("./database");
 const movieRouter = require("./routers/movie");
+const runBackgroundFetching = require("./routers/movie");
 
 const app = express();
 app.use(bodyParser.json({ type: "application/json" }));
@@ -22,4 +23,5 @@ app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`);
+  // runBackgroundFetching();
 });

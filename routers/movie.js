@@ -2,12 +2,31 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios').default;
 
+const { shuffle } = require("../shuffle");
+
 const Movie = require("../database/schemes/movie");
   
   router.get("/list", async (req, res, next) => {
     try {
-      const movies = await Movie.find().select("_id title type");
-      res.json(movies);
+      const { genre } = req.query;
+      
+      if (!genre) {
+        const movies = await Movie.find().select(
+          "_id title poster rating genres"
+        );
+        const shuffledMovies = shuffle(movies);
+        if (movies) res.json(shuffledMovies.slice(0, 8));
+        else throw new Error("Movies not found");
+      } 
+      else {
+        const movies = await Movie.find({
+          genres: { $elemMatch: { name: genre } },
+        }).select("_id title poster rating genres")
+  
+        const shuffledMovies = shuffle(movies);
+        if (shuffledMovies) res.json(shuffledMovies.slice(0, 8));
+        else throw new Error("Movies not found");
+      }
     } catch (error) {
       next(error);
     }
@@ -35,10 +54,10 @@ const Movie = require("../database/schemes/movie");
     }
 });
   
-  router.get("/:_id",async (req,res,next)=>{
+  router.get(`/:id`, async (req,res,next)=>{
     try {
-      const { _id } = req.params
-      const movie = await Movie.findById(_id);
+      const { id } = req.params;
+      const movie = await Movie.find({"id":id});
       if(!movie){
         throw new Error("Movie not found");
       }
@@ -47,17 +66,23 @@ const Movie = require("../database/schemes/movie");
       next(error);
     }
   });
+
   
   router.post("/create", async (req, res, next) => {
     try {
       console.log("Create movie request",req.body);
-      const { title, type, time, genres, author, description} = req.body;
+      const { id, poster, backdrop, tagline, data, runtime, rating, title, type, genres, description} = req.body;
       const movie = await Movie.create({
+        id,
+        poster,
+        backdrop,
+        tagline,
+        data,
+        runtime,
+        rating,
         title,
         type,
-        time,
         genres,
-        author,
         description
       });
       console.log("Movie created:", movie);
@@ -75,4 +100,72 @@ const Movie = require("../database/schemes/movie");
     console.log(response.data);
   })
 
+
+  const FETCHINGDELAY = 5000;
+  const iterationCount = 50;
+  async function addMoviesToDatabase(pageIteration = 1) {
+    if (pageIteration > 20000) return;
+    for (let i = pageIteration; i < pageIteration + iterationCount ; i++) {
+      const movieRes = await axios.get(
+        "https://api.themoviedb.org/3/discover/movie",
+        {
+          params: {
+            api_key: process.env.TMDB_API_KEY,
+            with_genres: "28|27|18|35",
+            page: i,
+          },
+        });
+      let movieIds = [];
+      movieRes.data.results.forEach((element) => {
+        movieIds.push(element.id);
+      });
+      for (let movieId of movieIds) {
+        try {
+          const response = await axios.get(
+            `https://api.themoviedb.org/3/movie/${movieId}`,
+            {
+              params: {
+                api_key: process.env.TMDB_API_KEY,
+              }, 
+            }
+          );
+          const {
+            id,
+            title,
+            poster_path,
+            backdrop_path,
+            vote_average,
+            genres,
+            runtime,
+            tagline,
+            overview,
+            release_date,
+          } = response.data;
+          if (overview) {
+            const newMovie = await Movie.create({
+              id: `${id}m`,
+              title,
+              type: "Movie",
+              tagline,
+              description: overview,
+              poster: `https://image.tmdb.org/t/p/original${poster_path}`,
+              backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
+              rating: vote_average,
+              runtime,
+              genres,
+              date: release_date,
+            });
+          }} catch (error) {
+          console.log(error.message);
+        }
+      }};
+    
+    setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIteration + iterationCount);
+  }
+  
+  function runBackgroundFetching() {
+    setTimeout(addMoviesToDatabase, FETCHINGDELAY, 1);
+  }
+
   module.exports = router
+  module.exports = runBackgroundFetching;
