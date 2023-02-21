@@ -65,7 +65,7 @@ router.get('/list', async (req, res, next) => {
 
    const FETCHINGDELAY = 5000;
 
-   async function addMoviesToDatabase(pageIteration = 1) {
+   async function addMoviesToDataBase(pageIteration = 1) {
      for (let i = 1; i < 50; i++) {
        const movieRes = await axios.get(
          "https://api.themoviedb.org/3/discover/movie",
@@ -109,22 +109,22 @@ router.get('/list', async (req, res, next) => {
        }
      }
      if (pageIteration > 200) return;
-     setTimeout(addMoviesToDatabase, FETCHINGDELAY, ++pageIteration);
+     setTimeout(addMoviesToDataBase, FETCHINGDELAY, ++pageIteration);
    }
    
-   setInterval(addMoviesToDatabase, FETCHINGDELAY);
+   setInterval(addMoviesToDataBase, FETCHINGDELAY);
    
    function runBackgroundFetching() {
      let pageIterator = 1;
-     addMoviesToDatabase(pageIterator++);
-     setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIterator);
+     addMoviesToDataBase(pageIterator++);
+     setTimeout(addMoviesToDataBase, FETCHINGDELAY, pageIterator);
    }
-   setInterval(addMoviesToDatabase, FETCHINGDELAY);
+   setInterval(addMoviesToDataBase, FETCHINGDELAY);
 
    function runBackgroundFetching() {
      let pageIterator = 1;
-     addMoviesToDatabase(pageIterator++);
-     setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIterator);
+     addMoviesToDataBase(pageIterator++);
+     setTimeout(addMoviesToDataBase, FETCHINGDELAY, pageIterator);
    }
 
    axios.get(`https://api.themoviedb.org/3/movie/550?`, {
