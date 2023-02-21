@@ -144,10 +144,10 @@ const fillDB = async (fillIteration) => {
             });
         }
         catch(err) {
-            console.log(err.message);
+            console.log("Error with getting films page "+pageIndex, err.message);
         }
 
-        if(typeof tmdbMoviesList == "undefined") return;
+        if(typeof tmdbMoviesList == "undefined") continue;
         for(let movieData of tmdbMoviesList.data.results) {
             try {
                 let movie = await axios.get(`https://api.themoviedb.org/3/movie/${movieData.id}`, 
@@ -176,17 +176,17 @@ const fillDB = async (fillIteration) => {
                         data: movie.data.release_date
                     }
                 );
-                console.log("Film added", movie.data.title);
+                console.log("Film added "+pageIndex, movie.data.title);
             }
             catch(err) {
-                console.log(err.message);
+                console.log("Error with adding film "+pageIndex, err.message);
             }
 
         }
 
     }
-
-    if(fillIteration > 50) return;
+    console.log(fillIteration);
+    if(fillIteration > 30) return;
     setTimeout(fillDB, FETCHINGDELAY, ++fillIteration);
 
 }
