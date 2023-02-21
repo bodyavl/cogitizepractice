@@ -5,7 +5,7 @@ const schema = new Schema({
     id: { type: Number, required: true, unique: true},
     title: { type: String, required: true },
     description: { type: String, required: true },
-    genres: { type: String, required: true },
+    genres: [{ id: Number, name: String }],
     tagline: String,
     poster: String,
     backdrop: String,
