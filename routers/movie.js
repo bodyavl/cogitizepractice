@@ -74,7 +74,7 @@ router.get("/:id", async (req, res, next) => {
 const FETCHINGDELAY = 5000;
 const iterationCount = 50;
 async function addMoviesToDatabase(pageIteration = 1) {
-  if (pageIteration > 15000) return;
+  if (pageIteration > 20000) return;
   for (let i = 1; i < pageIteration + iterationCount ; i++) {
     const movieRes = await axios.get(
       "https://api.themoviedb.org/3/discover/movie",
