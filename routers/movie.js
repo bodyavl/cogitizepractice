@@ -1,34 +1,52 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 
 const Movie = require("../database/schemes/movie");
+const { shuffle } = require("../utils");
 
 router.param("id", function( req, res, next, id ) {
     req.id_from_param = id;
     next();
 });
 
-router.get("/all", async (req, res, next) => {
-    try {
-      const allmovies = await Movie.find();
-      if(!allmovies)
-        throw new Error("There are no movies");     
-        res.json(allmovies);
-    } catch (error) {
-      next(error);
+router.get("/list", async (req, res, next) => {
+  try {
+    const { genre } = req.query;
+    if (!genre) {
+      const movies = await Movie.find().select(
+        "_id title poster rating genres"
+      );
+
+      const shuffledMovies = shuffle(movies);
+
+      if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
+      else throw new Error("There are no movies");
+    } else {
+      const movies = await Movie.find({
+        genres: { $elemMatch: { name: genre } },
+      }).select("_id title poster rating genres");
+
+      const shuffledMovies = shuffle(movies);
+      if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
+      else throw new Error("There are no movies");
     }
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/add", async (req, res, next) => {
     try {
-      const { title, author, rating, runtime, genre} = req.body;
+      const { title, author, rating, runtime} = req.body;
       const movie = await Movie.create({
         title,
         author,
         rating,
-        runtime,
-        genre,
+        runtime
       });
       console.log("Created movie:", movie);
       res.json(movie);
@@ -79,4 +97,62 @@ router.get("/TMDB/:id", async (req, res, next) => {
     }
 });
 
-module.exports = router
+const FETCHINGDELAY = 5000;
+async function addMoviesToDatabase(pageIteration = 1) {
+  for (let i = 1; i < 50; i++) {
+    const movieRes = await axios.get(
+      "https://api.themoviedb.org/3/discover/movie",
+      {
+        params: {
+          api_key: process.env.TMDB_API_KEY,
+          with_genres: "28|27|18|35",
+          page: i * pageIteration,
+        },
+      }
+    );
+    let movieIds = [];
+    movieRes.data.results.forEach((element) => {
+      movieIds.push(element.id);
+    });
+    for (let movieId of movieIds) {
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/${movieId}`,
+          {
+            params: {
+              api_key: process.env.TMDB_API_KEY,
+            },
+          }
+        );
+        const { id, title, vote_average, genres, runtime, poster_path, backdrop_path, tagline, overview, release_date,
+        } = response.data;
+        if (overview) {
+          const newMovie = await Movie.create({
+            id,
+            title,
+            rating: vote_average,
+            genres,
+            runtime,
+            poster: `https://image.tmdb.org/t/p/original${poster_path}`,
+            backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
+            tagline,
+            description: overview,
+            date: release_date,
+          });
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  }
+  if (pageIteration > 200) return;
+  setTimeout(addMoviesToDatabase, FETCHINGDELAY, ++pageIteration);
+}
+
+function runBackgroundFetching() {
+  let pageIterator = 1;
+  addMoviesToDatabase(pageIterator++);
+  setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIterator);
+}
+
+module.exports = { router, runBackgroundFetching };

@@ -6,12 +6,6 @@ const app = process.env.APP_URL;
 
 describe("Movies API", () => {
 
-    test("Should return all movies", async () => {
-        const res = await request(app).get("/movie/all");
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toBeInstanceOf(Array);
-    });
-
     test("Should return tranding movie by day from TMDB", async () => {
         const res = await request(app).get("/movie/TMDB/day");
         expect(res.statusCode).toEqual(200);

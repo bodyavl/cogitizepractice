@@ -1,12 +1,10 @@
+const dotenv = require('dotenv');
+dotenv.config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
 const app = express();
-dotenv.config();
-const database = require("./database");
-const movieRouter = require("./routers/movie");
+const { router, runBackgroundFetching } = require('./routers/movie');
 app.use(bodyParser.json({type: 'application/json'}));
-const port = 305
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
@@ -14,14 +12,16 @@ function errorHandler(error, req, res, next) {
   res.status(500).send(error.message);
 }
 
-process.on('uncaughtException', function (err) {
-  console.log(err);
+process.on('uncaughtException', function (error) {
+  console.log(error);
 }); 
 
-app.use("/movie", movieRouter);
+app.use("/movie", router);
 
 app.use(errorHandler);
 
+const port = process.env.PORT || 305;
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log("On port", port);
+  runBackgroundFetching();
 });
