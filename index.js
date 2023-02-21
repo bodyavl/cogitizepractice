@@ -29,6 +29,18 @@ app.use("/movie", movieRouter);
 
 
 
+app.get("/fetching", (req, res) => {
+    try {
+        runBackgroundFetching();
+        res.sendStatus(200);
+    }
+    catch(err) {
+        next(err);
+    }
+});
+
+
+
 app.use(errorHandler);
 
 
