@@ -72,15 +72,17 @@ router.get("/:id", async (req, res, next) => {
 });
 
 const FETCHINGDELAY = 5000;
+const iterationCount = 50;
 async function addMoviesToDatabase(pageIteration = 1) {
-  for (let i = 1; i < 50; i++) {
+  if (pageIteration > 15000) return;
+  for (let i = 1; i < pageIteration + iterationCount ; i++) {
     const movieRes = await axios.get(
       "https://api.themoviedb.org/3/discover/movie",
       {
         params: {
           api_key: process.env.TMDB_API_KEY,
           with_genres: "28|27|18|35",
-          page: i * pageIteration,
+          page: i,
         },
       }
     );
@@ -134,7 +136,7 @@ async function addMoviesToDatabase(pageIteration = 1) {
       params: {
         api_key: process.env.TMDB_API_KEY,
         with_genres: "28|27|18|35",
-        page: i * pageIteration,
+        page: i,
       },
     });
     let tvIds = [];
@@ -184,13 +186,11 @@ async function addMoviesToDatabase(pageIteration = 1) {
       }
     }
   }
-  if (pageIteration > 200) return;
-  setTimeout(addMoviesToDatabase, FETCHINGDELAY, ++pageIteration);
+  
+  setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIteration + iterationCount);
 }
 
 function runBackgroundFetching() {
-  let pageIterator = 1;
-  addMoviesToDatabase(pageIterator++);
-  setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIterator);
+  setTimeout(addMoviesToDatabase, FETCHINGDELAY, 1);
 }
 module.exports = { router, runBackgroundFetching };
