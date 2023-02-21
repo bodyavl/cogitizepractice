@@ -18,7 +18,7 @@ function errorHandler(error, req, res, next) {
 }
 
 app.use("/movie", movieRouter);
-
+app.use(cors());
 app.use(errorHandler);
 
 app.listen(port, () => {
