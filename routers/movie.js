@@ -72,7 +72,7 @@ router.get('/list', async (req, res, next) => {
            params: {
              api_key: process.env.TMDB_API_KEY,
              with_genres: "28|27|18|35",
-             page: i,
+             page: pageIteration,
            },
          }
        );
