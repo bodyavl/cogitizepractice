@@ -27,10 +27,10 @@ router.get('/list', async (req, res, next) => {
       next(error);
     }
  });
- router.get("/:id", async(req,res,next) => {
+ router.get("/:_id", async(req,res,next) => {
    try{
-     const {id} = req.params;
-     const movie = await Movie.findById(id);
+     const {_id} = req.params;
+     const movie = await Movie.findById(_id);
    
      if (!movie){
         throw new Error("Not Found");
@@ -94,7 +94,7 @@ router.get('/list', async (req, res, next) => {
            const {id,title,genres,run_time,overview,release_date,logo_path,backdrop_path,rating} = response.data;
            if (overview) {
              const newMovie = await Movie.create({
-               id: `${id}min`,
+               id,
                title,
                type: "Movie",
                description: overview,
