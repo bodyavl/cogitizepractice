@@ -159,8 +159,7 @@ async function addMoviesToDatabase(pageIteration = 1) {
           });
         }
       } catch (error) {
-        console.log(error.message);
-        // break;
+        if (error.code !== 11000) console.log(JSON.stringify(error));
       }
     }
     const tvRes = await axios.get("https://api.themoviedb.org/3/discover/tv", {
@@ -212,8 +211,7 @@ async function addMoviesToDatabase(pageIteration = 1) {
           });
         }
       } catch (error) {
-        console.log(error.message);
-        // break;
+        if (error.code !== 11000) console.log(JSON.stringify(error));
       }
     }
   }
