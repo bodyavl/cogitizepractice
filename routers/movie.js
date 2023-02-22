@@ -31,12 +31,20 @@ router.post("/create", async (req, res, next) => {
     next(error);
   }
 });
-
+const genresList = {
+  Any: null,
+  Action: "Action",
+  Horror: "Horror",
+  Drama: "Drama",
+  Comedy: "Comedy"
+}
 router.get("/list", async (req, res, next) => {
   try {
     const { genre } = req.query;
     
-    if (!genre) {
+    const foundGenre = genre ? genresList[genre] : undefined;
+    
+    if (!foundGenre) {
         
       const movies = await Movie.find().select(
         "_id title poster rating genres"
@@ -47,7 +55,7 @@ router.get("/list", async (req, res, next) => {
     } else {
        
       const movies = await Movie.find({
-        genres: { $elemMatch: { name: genre } },
+        genres: { $elemMatch: { name: foundGenre } },
       }).select("_id title poster rating genres")
 
       const shuffledMovies = shuffle(movies);
@@ -75,7 +83,7 @@ const FETCHINGDELAY = 5000;
 const iterationCount = 50;
 async function addMoviesToDatabase(pageIteration = 1) {
   if (pageIteration > 20000) return;
-  for (let i = pageIteration; i < pageIteration + iterationCount ; i++) {
+  for (let i = 1; i < pageIteration + iterationCount ; i++) {
     const movieRes = await axios.get(
       "https://api.themoviedb.org/3/discover/movie",
       {
