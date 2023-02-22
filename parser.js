@@ -28,7 +28,7 @@ async function parser() {
                     title: title,
                     description: overview,
                     genre: genres,
-                    img: `https://image.tmdb.org/t/p/original${poster_path}`,
+                    poster: `https://image.tmdb.org/t/p/original${poster_path}`,
                     rating: vote_average,
                 }
             )
