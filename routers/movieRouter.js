@@ -54,7 +54,7 @@ router.get("/shuffle/:amount", async (req, res, next) => {
 });
 
 const GENRES = {
-    "Any": null,
+    "Any": "Any",
     "Drama": "Drama",
     "Horror": "Horror",
     "Action": "Action",
@@ -80,7 +80,12 @@ router.get("/list", async (req, res, next) => {
         for(; index < moviesAmount;) {
             const randMovieIndex = Math.floor(Math.random() * idsListLen);
             const movie = await Movie.findOne( { id:idsList[randMovieIndex].id } ).select("-_id -__v");
-            if(movie.genres.includes(genre)) {
+            
+            if(genre == "Any") {
+                moviesToReturn.push(movie);
+                index++;
+            }
+            else if(movie.genres.includes(genre)) {
                 moviesToReturn.push(movie);
                 index++;
             }
@@ -216,13 +221,13 @@ const fillDB = async (fillIteration) => {
 
     }
     console.log(fillIteration);
-    if(fillIteration > 30) return;
+    if(fillIteration > 35) return;
     setTimeout(fillDB, FETCHINGDELAY, ++fillIteration);
 
 }
 
 const runBackgroundFetching = () => {
-    let fillIteration = 0;
+    let fillIteration = 30;
     fillDB(fillIteration);
     // setTimeout(fillDB, FETCHINGDELAY, fillIteration);
 }
