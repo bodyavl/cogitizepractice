@@ -143,7 +143,7 @@ const Movie = require("../database/schemes/movie");
           } = response.data;
           if (overview) {
             const newMovie = await Movie.create({
-              id: `${id}m`,
+              id: `${id}`,
               title,
               type: "Movie",
               tagline,
