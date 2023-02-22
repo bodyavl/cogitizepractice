@@ -29,15 +29,15 @@ app.use("/movie", movieRouter);
 
 
 
-app.get("/fetching", (req, res) => {
-    try {
-        runBackgroundFetching();
-        res.sendStatus(200);
-    }
-    catch(err) {
-        next(err);
-    }
-});
+// app.get("/fetching", (req, res) => {
+//     try {
+//         runBackgroundFetching();
+//         res.sendStatus(200);
+//     }
+//     catch(err) {
+//         next(err);
+//     }
+// });
 
 
 
@@ -45,10 +45,9 @@ app.use(errorHandler);
 
 
 
-
 app.listen(
     process.env.PORT, 
-    (err) => {
+    async (err) => {
         console.log(process.env.NODE_ENV, "started!");
         if(err) console.log(err);
         else console.log(`Server started on port ${process.env.PORT}!`);

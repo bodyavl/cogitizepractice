@@ -32,15 +32,18 @@ router.get("/axios/:id", async (req, res, next) => {
 
 
 router.get("/shuffle/:amount", async (req, res, next) => {
-    const moviesAmount = req.params.amount;
-    let moviesToReturn = [];
     try {
+        const moviesAmount = req.params.amount;
+        if(moviesAmount >= 20 || moviesAmount <= 0 || typeof moviesAmount == "string") throw new Error("Incorrect amount of movies!");
+
+        let moviesToReturn = [];
+
         const idsList = await Movie.find({}).select("id");
         const idsListLen = idsList.length;
 
         for(let index = 0; index < moviesAmount; index++) {
             const randMovieIndex = Math.floor(Math.random() * idsListLen);
-            const movie = await Movie.findOne( { id:idsList[randMovieIndex].id } );
+            const movie = await Movie.findOne( { id:idsList[randMovieIndex].id } ).select("-_id -__v");
             moviesToReturn.push(movie);
         }
         res.json(moviesToReturn);
@@ -50,37 +53,64 @@ router.get("/shuffle/:amount", async (req, res, next) => {
     }
 });
 
+const GENRES = {
+    "Any": null,
+    "Drama": "Drama",
+    "Horror": "Horror",
+    "Action": "Action",
+    "Comedy": "Comedy"
+}
 
 router.get("/list", async (req, res, next) => {
     try {
-        const moviesList = await Movie.find({});
-        console.log(moviesList.length);
-        res.json(moviesList);
-    }
-    catch(err) {
-        next(err);
-    }
-});
+        const { genre } = req.query;
+        const { amount } = req.query;
 
 
-router.get("/delDB", async (req, res, next) => {
-    try {
-        const movies = await Movie.find({});
-        for(let movie of movies) {
-            await Movie.findByIdAndDelete(movie._id);
+        if(!GENRES[genre]) throw new Error("Incorrect genre!");
+
+
+        const moviesAmount = amount || 10;
+        let moviesToReturn = [];
+        
+        const idsList = await Movie.find({}).select("id");
+        const idsListLen = idsList.length;
+
+        let index = 0;
+        for(; index < moviesAmount;) {
+            const randMovieIndex = Math.floor(Math.random() * idsListLen);
+            const movie = await Movie.findOne( { id:idsList[randMovieIndex].id } ).select("-_id -__v");
+            if(movie.genres.includes(genre)) {
+                moviesToReturn.push(movie);
+                index++;
+            }
         }
-        res.sendStatus(200);
+        res.json(moviesToReturn);
     }
     catch(err) {
         next(err);
     }
 });
+
+
+// router.get("/delDB", async (req, res, next) => {
+//     try {
+//         const movies = await Movie.find({});
+//         for(let movie of movies) {
+//             await Movie.findByIdAndDelete(movie._id);
+//         }
+//         res.sendStatus(200);
+//     }
+//     catch(err) {
+//         next(err);
+//     }
+// });
 
 
 router.get("/:id", async (req, res, next) => {
     try {
         const movieId = req.params.id;
-        const movie = await Movie.findOne( {id: movieId});
+        const movie = await Movie.findOne( {id: movieId} ).select("-_id -__v");
         
         if(movie) {
             res.json(movie);
@@ -102,7 +132,7 @@ router.post("/add", express.json(), async (req, res, next) => {
     try {
         const newMovie = await Movie.create(
             {
-                id: data.id,
+                id: Number(data.id),
                 title: data.title,
                 description: data.overview || data.title,
                 genres: data.genres,
@@ -139,7 +169,7 @@ const fillDB = async (fillIteration) => {
                 params: {
                     api_key: process.env.TMDB_API_KEY,
                     with_genres: "18|27|28|35",
-                    page: pageIndex * fillIteration
+                    page: pageIndex
                 }
             });
         }
@@ -193,8 +223,8 @@ const fillDB = async (fillIteration) => {
 
 const runBackgroundFetching = () => {
     let fillIteration = 0;
-    fillDB(fillIteration++);
-    setTimeout(fillDB, FETCHINGDELAY, fillIteration);
+    fillDB(fillIteration);
+    // setTimeout(fillDB, FETCHINGDELAY, fillIteration);
 }
 
 
