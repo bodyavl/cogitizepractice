@@ -7,11 +7,40 @@ const Movie = require("../database/schemes/movie");
 
 const { shuffle } = require("../shuffle");
 
+// router.get("/list", async (req, res, next) => {
+//   try {
+//     const moviesList = await Movie.find().select("_id title poster rating");
+//     const shuffledMoviesList = shuffle(moviesList);
+//     res.status(200).json(shuffledMoviesList.slice(0, 8));
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+const genresList = {
+  Any: null,
+  Action: "Action",
+  Horror: "Horror",
+  Drama: "Drama",
+  Comedy: "Comedy",
+};
+
 router.get("/list", async (req, res, next) => {
   try {
-    const moviesList = await Movie.find().select("-id -__v");
-    const shuffledMoviesList = shuffle(moviesList);
-    res.status(200).json(shuffledMoviesList.slice(0, 10));
+    const { genre } = req.query;
+
+    const options = {};
+
+    if (genre && genresList[genre])
+      options.genres = { $elemMatch: { name: genresList[genre] } };
+
+    const movies = await Movie.find(options).select(
+      "_id title poster rating genres"
+    );
+    const shuffledMovies = shuffle(movies);
+    if (!shuffledMovies) throw new Error("No movies found");
+
+    res.status(200).json(shuffledMovies.slice(0, 8));
   } catch (error) {
     next(error);
   }
@@ -32,15 +61,16 @@ router.get("/cleanDB", async (req, res, next) => {
 });
 
 router.get("/:id", async (req, res, next) => {
-  try {
-    const movieId = req.params.id;
-    const movie = await Movie.findById(movieId).select("-id -__v");
-    //console.log(movie);
-    res.json(movie);
-  } catch (error) {
-    next(error);
-  }
-});
+    try {
+      const { id } = req.params;
+      const movie = await Movie.findById(id).select("-__v -_id");
+  
+      if (movie) res.status(200).json(movie);
+      else throw new Error("Movie has not found");
+    } catch (error) {
+      next(error);
+    }
+  });
 
 router.post("/create", async (req, res, next) => {
   try {

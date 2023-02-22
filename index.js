@@ -11,6 +11,7 @@ const bodyparser = require("body-parser");
 const database = require("./database");
 
 const movieRouter = require("./routes/movie");
+const TVShowRouter = require("./routes/tvshow");
 
 const errorHandler = (error, req, res, next) => {
   res.header("Content-Type", "application/json");
@@ -21,6 +22,7 @@ const errorHandler = (error, req, res, next) => {
 app.use(cors({ credentials: true, origin: true }));
 app.use(bodyparser.json());
 app.use("/movie", movieRouter);
+app.use("/tvshow", TVShowRouter);
 app.use(errorHandler);
 
 
