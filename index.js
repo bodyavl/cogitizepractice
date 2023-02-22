@@ -23,6 +23,8 @@ app.use(bodyparser.json());
 app.use("/movie", movieRouter);
 app.use(errorHandler);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server started on ${process.env.PORT} port`);
+
+const port = process.env.PORT || 3000
+app.listen(port, () => {
+  console.log(`Server started on ${port} port`);
 });
