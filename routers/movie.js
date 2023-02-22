@@ -48,11 +48,10 @@ router.get('/list', async (req, res, next) => {
      const movie =  await Movie.create ({
        id,
        title,
-       author,
        description,
-       country,
        rating, 
        genre,
+       run_time,
        backdrop,
        logo,
      });
@@ -62,18 +61,18 @@ router.get('/list', async (req, res, next) => {
      next(error);
    }
    });
-
    const FETCHINGDELAY = 5000;
-
-   async function addMoviesToDataBase(pageIteration = 1) {
-     for (let i = 1; i < 50; i++) {
+   const iterationCount = 50;
+   async function addMoviesToDatabase(pageIteration = 1) {
+     if (pageIteration > 20000) return;
+     for (let i = pageIteration; i < pageIteration + iterationCount ; i++) {
        const movieRes = await axios.get(
          "https://api.themoviedb.org/3/discover/movie",
          {
            params: {
              api_key: process.env.TMDB_API_KEY,
              with_genres: "28|27|18|35",
-             page: i * pageIteration,
+             page: i,
            },
          }
        );
@@ -91,49 +90,32 @@ router.get('/list', async (req, res, next) => {
                },
              }
            );
-           const {id,title,overview,genres,logo_path,backdrop_path,} = response.data;
+           const {id,title,genres,run_time,overview,release_date,} = response.data;
            if (overview) {
-             await new Promise((resolve) => setTimeout(resolve, FETCHINGDELAY));
              const newMovie = await Movie.create({
-               id,
+               id: `${id}min`,
                title,
+               type: "Movie",
                description: overview,
-               genres,
                logo: `https://image.tmdb.org/t/p/original${logo_path}`,
                backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
+               rating: vote_average,
+               genres,
+               run_time,
+               date: release_date,
              });
            }
          } catch (error) {
            console.log(error.message);
          }
        }
-     }
-     if (pageIteration > 200) return;
-     setTimeout(addMoviesToDataBase, FETCHINGDELAY, ++pageIteration);
-   }
-   
-   setInterval(addMoviesToDataBase, FETCHINGDELAY);
-   
-   function runBackgroundFetching() {
-     let pageIterator = 1;
-     addMoviesToDataBase(pageIterator++);
-     setTimeout(addMoviesToDataBase, FETCHINGDELAY, pageIterator);
-   }
-   setInterval(addMoviesToDataBase, FETCHINGDELAY);
-
-   function runBackgroundFetching() {
-     let pageIterator = 1;
-     addMoviesToDataBase(pageIterator++);
-     setTimeout(addMoviesToDataBase, FETCHINGDELAY, pageIterator);
-   }
-
-   axios.get(`https://api.themoviedb.org/3/movie/550?`, {
-    params: {
-      api_key:process.env.TMDB_API_KEY
+      }
+       setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIteration + iterationCount);
     }
-  }).then((response) => {
-    console.log(response.data);
-  })
-
-   module.exports = router;
-   module.exports = runBackgroundFetching;
+  function runBackgroundFetching() {
+    let pageIterator = 1;
+    addMoviesToDatabase(pageIterator++)
+    setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIterator);
+  }
+   
+  module.exports = { router, runBackgroundFetching };
