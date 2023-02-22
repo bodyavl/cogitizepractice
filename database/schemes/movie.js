@@ -3,16 +3,18 @@ const { float } = require("webidl-conversions");
 
 const Schema = mongoose.Schema;
 
-const schema = new Schema({
+const genreSchema = new Schema(
+  {
+    name: String,
+  },
+  { _id: false }
+);
+
+const movieSchema = new Schema({
   id: { type: String, required: true, unique: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
-  type: {
-    type: String,
-    enum: ["Movie", "TV show"],
-    required: true,
-  },
-  genres: [String],
+  genres: [genreSchema],
   tagline: String,
   poster: String,
   backdrop: String,
@@ -21,6 +23,6 @@ const schema = new Schema({
   runtime: Number,
 });
 
-const Movie = mongoose.model("Movie", schema);
+const Movie = mongoose.model("Movie", movieSchema);
 
 module.exports = Movie;
