@@ -45,46 +45,21 @@ const types = {
 router.get("/list", async (req, res, next) => {
   try {
     const { genre, type } = req.query;
-    
-    const foundGenre = genre ? genresList[genre] : undefined;
-    const foundType = type ? types[type] : undefined;
-    
-    if (!foundGenre && !foundType) {
-        
-      const movies = await Movie.find().select(
-        "_id type title poster rating genres"
-      );
-      const shuffledMovies = shuffle(movies);
-      if (movies) res.status(200).json(shuffledMovies.slice(0, 8));
-      else throw new Error("No movies found");
-    } 
-    else if(!foundType) {
-      const movies = await Movie.find({
-        genres: { $elemMatch: { name: foundGenre } },
-      }).select("_id type title poster rating genres")
 
-      const shuffledMovies = shuffle(movies);
-      if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
-      else throw new Error("No movies found");
-    }
-    else if(!foundGenre) {
-      const movies = await Movie.find({
-        type: foundType
-      }).select("_id type title poster rating genres")
+    const options = {};
 
-      const shuffledMovies = shuffle(movies);
-      if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
-      else throw new Error("No movies found");
-    }
-    else {
-      const movies = await Movie.find({
-        genres: { $elemMatch: { name: foundGenre } }, type: foundType
-      }).select("_id type title poster rating genres")
+    if (genre && genresList[genre])
+      options.genres = { $elemMatch: { name: genresList[genre] } };
 
-      const shuffledMovies = shuffle(movies);
-      if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
-      else throw new Error("No movies found");
-    }
+    if (type && types[type]) options.type = types[type];
+
+    const movies = await Movie.find(options).select(
+      "_id type title poster rating genres"
+    );
+    const shuffledMovies = shuffle(movies);
+    if (!shuffledMovies) throw new Error("No movies found");
+
+    res.status(200).json(shuffledMovies.slice(0, 8));
   } catch (error) {
     next(error);
   }
