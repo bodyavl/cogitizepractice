@@ -52,7 +52,7 @@ router.get("/list", async (req, res, next) => {
     if (!foundGenre && !foundType) {
         
       const movies = await Movie.find().select(
-        "_id title poster rating genres"
+        "_id type title poster rating genres"
       );
       const shuffledMovies = shuffle(movies);
       if (movies) res.status(200).json(shuffledMovies.slice(0, 8));
@@ -61,7 +61,7 @@ router.get("/list", async (req, res, next) => {
     else if(!foundType) {
       const movies = await Movie.find({
         genres: { $elemMatch: { name: foundGenre } },
-      }).select("_id title poster rating genres")
+      }).select("_id type title poster rating genres")
 
       const shuffledMovies = shuffle(movies);
       if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
@@ -70,7 +70,7 @@ router.get("/list", async (req, res, next) => {
     else if(!foundGenre) {
       const movies = await Movie.find({
         type: foundType
-      }).select("_id title poster rating genres")
+      }).select("_id type title poster rating genres")
 
       const shuffledMovies = shuffle(movies);
       if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
@@ -78,8 +78,8 @@ router.get("/list", async (req, res, next) => {
     }
     else {
       const movies = await Movie.find({
-        genres: { $elemMatch: { name: foundGenre } },
-      }).select("_id title poster rating genres")
+        genres: { $elemMatch: { name: foundGenre } }, type: foundType
+      }).select("_id type title poster rating genres")
 
       const shuffledMovies = shuffle(movies);
       if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
