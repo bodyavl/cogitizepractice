@@ -25,7 +25,7 @@ const errorHandler = (err, req, res, next) => {
 const app = express();
 
 
-app.use(corse( {credentials: true, origin:true} ));
+app.use(cors( {credentials: true, origin:true} ));
 
 
 app.use("/movie", movieRouter);
