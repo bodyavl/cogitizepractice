@@ -34,7 +34,7 @@ router.get("/axios/:id", async (req, res, next) => {
 router.get("/shuffle/:amount", async (req, res, next) => {
     try {
         const moviesAmount = req.params.amount;
-        if(moviesAmount >= 20 || moviesAmount <= 0 || typeof moviesAmount == "string") throw new Error("Incorrect amount of movies!");
+        if(moviesAmount >= 20 || moviesAmount <= 0) throw new Error("Incorrect amount of movies!");
 
         let moviesToReturn = [];
 
