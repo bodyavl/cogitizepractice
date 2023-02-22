@@ -6,7 +6,7 @@ const Movie = require("./database/schemas/movie");
 const { post } = require("./routers/movie");
 
 async function parser() {
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 500; i++) {
         try {
             const result = await axios.get(`https://api.themoviedb.org/3/movie/${i}?`, {
                 params: {
