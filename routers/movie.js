@@ -4,10 +4,21 @@ const axios = require('axios')
 const Movie = require("../database/schemes/movie");
 const { shuffle } = require("../utils");
 
+const GenreIdentifier = {
+  Any: null,
+  Action: "Action",
+  Horror: "Horror",
+  Drama: "Drama",
+  Comedy: "Comedy",
+};
+
 router.get("/list", async (req, res, next) => {
   try {
     const { genre } = req.query;
-    if (!genre) {
+
+    const foundGenre = genre ? GenreIdentifier[genre] : undefined;
+
+    if (!foundGenre) {
       const movies = await Movie.find().select(
         "_id title poster rating genres"
       );
@@ -18,7 +29,7 @@ router.get("/list", async (req, res, next) => {
       else throw new Error("There are no movies");
     } else {
       const movies = await Movie.find({
-        genres: { $elemMatch: { name: genre } },
+        genres: { $elemMatch: { name: foundGenre } },
       }).select("_id title poster rating genres");
 
       const shuffledMovies = shuffle(movies);
