@@ -22,7 +22,7 @@ function errorHandler(error, req, res, next) {
 
 app.use(errorHandler);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 304;
 app.listen(port, () => {
   console.log("On port", port);
   runBackgroundFetching();
