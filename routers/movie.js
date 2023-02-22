@@ -38,13 +38,18 @@ const genresList = {
   Drama: "Drama",
   Comedy: "Comedy"
 }
+const types = {
+  Movie: "Movie",
+  TV: "TV show"
+}
 router.get("/list", async (req, res, next) => {
   try {
-    const { genre } = req.query;
+    const { genre, type } = req.query;
     
     const foundGenre = genre ? genresList[genre] : undefined;
+    const foundType = type ? types[type] : undefined;
     
-    if (!foundGenre) {
+    if (!foundGenre && !foundType) {
         
       const movies = await Movie.find().select(
         "_id title poster rating genres"
@@ -52,8 +57,26 @@ router.get("/list", async (req, res, next) => {
       const shuffledMovies = shuffle(movies);
       if (movies) res.status(200).json(shuffledMovies.slice(0, 8));
       else throw new Error("No movies found");
-    } else {
-       
+    } 
+    else if(!foundType) {
+      const movies = await Movie.find({
+        genres: { $elemMatch: { name: foundGenre } },
+      }).select("_id title poster rating genres")
+
+      const shuffledMovies = shuffle(movies);
+      if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
+      else throw new Error("No movies found");
+    }
+    else if(!foundGenre) {
+      const movies = await Movie.find({
+        type: foundType
+      }).select("_id title poster rating genres")
+
+      const shuffledMovies = shuffle(movies);
+      if (shuffledMovies) res.status(200).json(shuffledMovies.slice(0, 8));
+      else throw new Error("No movies found");
+    }
+    else {
       const movies = await Movie.find({
         genres: { $elemMatch: { name: foundGenre } },
       }).select("_id title poster rating genres")
