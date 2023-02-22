@@ -33,7 +33,7 @@ router.get("/cleanDB", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const movieId = req.params.id;
+    const movieId = req.params._id;
     const movie = await Movie.findById(movieId);
     //console.log(movie);
     res.json(movie);
