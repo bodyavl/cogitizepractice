@@ -7,6 +7,7 @@ const schema = new Schema({
     description: String,
     genre: {type: Array},
     rating: Number,
+    img: String,
     date: { type: Date, required: false },
 });
 

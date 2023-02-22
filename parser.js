@@ -3,9 +3,10 @@ dotenv.config();
 const axios = require("axios").default;
 const database = require("./database/index");
 const Movie = require("./database/schemas/movie");
+const { post } = require("./routers/movie");
 
 async function parser() {
-    for (let i = 0; i < 3000; i++) {
+    for (let i = 0; i < 5000; i++) {
         try {
             const result = await axios.get(`https://api.themoviedb.org/3/movie/${i}?`, {
                 params: {
@@ -17,6 +18,7 @@ async function parser() {
                 title,
                 overview,
                 genres,
+                poster_path,
                 vote_average,
             } = result.data;
 
@@ -26,6 +28,7 @@ async function parser() {
                     title: title,
                     description: overview,
                     genre: genres,
+                    img: `https://image.tmdb.org/t/p/original${poster_path}`,
                     rating: vote_average,
                 }
             )

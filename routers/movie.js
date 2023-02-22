@@ -12,7 +12,7 @@ router.get("/list", async (req, res, next) => {
         console.log(filmscounts);
         const { count = 10 } = req.query;
         const skip = getRandomArbitrary(0, filmscounts - count);
-        const movies = await Movie.find({}, "id", { skip: skip, limit: count }).select("_id title rating author");
+        const movies = await Movie.find({}, "id", { skip: skip, limit: count }).select("_id title genre img rating author");
         const shuffledMovies = shuffle(movies);
         console.log(req.query);
         res.json(shuffledMovies);
