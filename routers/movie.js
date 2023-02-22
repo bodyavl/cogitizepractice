@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const axios = require('axios')
-
 const Movie = require("../database/schemes/movie");
 const { shuffle } = require("../utils");
 

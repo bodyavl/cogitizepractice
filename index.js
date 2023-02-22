@@ -3,6 +3,7 @@ dotenv.config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const database = require("./database");
 const { router, runBackgroundFetching } = require('./routers/movie');
 app.use(bodyParser.json({type: 'application/json'}));
 
