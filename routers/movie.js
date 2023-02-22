@@ -64,7 +64,7 @@ router.get('/list', async (req, res, next) => {
    const FETCHINGDELAY = 5000;
    const iterationCount = 50;
    async function addMoviesToDatabase(pageIteration = 1) {
-     if (pageIteration > 20000) return;
+     if (pageIteration > 10000) return;
      for (let i = pageIteration; i < pageIteration + iterationCount ; i++) {
        const movieRes = await axios.get(
          "https://api.themoviedb.org/3/discover/movie",
@@ -90,7 +90,7 @@ router.get('/list', async (req, res, next) => {
                },
              }
            );
-           const {id,title,genres,run_time,overview,release_date,} = response.data;
+           const {id,title,genres,run_time,overview,release_date,logo_path,backdrop_path,rating} = response.data;
            if (overview) {
              const newMovie = await Movie.create({
                id: `${id}min`,
@@ -99,7 +99,7 @@ router.get('/list', async (req, res, next) => {
                description: overview,
                logo: `https://image.tmdb.org/t/p/original${logo_path}`,
                backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
-               rating: vote_average,
+               rating,
                genres,
                run_time,
                date: release_date,
