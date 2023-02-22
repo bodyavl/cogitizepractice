@@ -1,6 +1,9 @@
-const express = require('express')
-const router = express.Router()
-const axios = require('axios')
+const dotenv = require("dotenv");
+dotenv.config();
+
+const express = require('express');
+const router = express.Router();
+const axios = require('axios').default;
 const Movie = require("../database/schemes/movie");
 const { shuffle } = require("../utils");
 
@@ -60,7 +63,7 @@ router.post("/add", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
     try {
       const { id } = req.params
-      const movieid = await Movie.findById(id);
+      const movieid = await Movie.findById(id).select("-__v -_id");;
       if(!movieid)
         throw new Error("There is no movie with this id");
         res.json(movieid);
@@ -145,7 +148,7 @@ async function addMoviesToDatabase(pageIteration = 1) {
           });
         }
       } catch (error) {
-        console.log(error.message);
+        if (error.code !== 11000) console.log(JSON.stringify(error));
       }
     }
   }

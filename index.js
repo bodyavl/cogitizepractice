@@ -1,28 +1,28 @@
 const dotenv = require('dotenv');
 dotenv.config();
-const express = require('express');
-const bodyParser = require('body-parser');
+
 const cors = require('cors');
-const database = require("./database");
+const express = require("express");
+require("./db")
+const bodyParser = require("body-parser");
 const { router, runBackgroundFetching } = require('./routers/movie');
+
 const app = express();
-app.use(bodyParser.json({type: 'application/json'}));
+
+app.use(cors({ credentials: true, origin: true }));
+app.use(bodyParser.json({ type: "application/json" }));
+app.use('/movie', router);
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
-  console.log("Error occured:", error.message);
+  console.log("Error occured: ", error.message);
   res.status(500).send(error.message);
 }
 
-process.on('uncaughtException', function (error) {
-  console.log(error);
-}); 
 
-app.use("/movie", router);
-app.use(cors({ credentials: true, origin: true }));
 app.use(errorHandler);
 
-const port = process.env.PORT || 305;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("On port", port);
   runBackgroundFetching();
