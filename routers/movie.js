@@ -95,7 +95,7 @@ router.get("/TMDB/:id", async (req, res, next) => {
         }
     }
     catch(error) {
-        next(error);
+        next(error.response.data);
     }
 });
 
