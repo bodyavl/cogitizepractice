@@ -9,7 +9,7 @@ const { shuffle } = require("../shuffle");
 
 router.get("/list", async (req, res, next) => {
   try {
-    const moviesList = await Movie.find().select("_id title genres");
+    const moviesList = await Movie.find().select("-id -__v");
     const shuffledMoviesList = shuffle(moviesList);
     res.status(200).json(shuffledMoviesList.slice(0, 10));
   } catch (error) {
@@ -33,8 +33,8 @@ router.get("/cleanDB", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const movieId = req.params._id;
-    const movie = await Movie.findById(movieId);
+    const movieId = req.params.id;
+    const movie = await Movie.findById(movieId).select("-id -__v");
     //console.log(movie);
     res.json(movie);
   } catch (error) {
