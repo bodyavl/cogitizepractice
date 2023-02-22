@@ -167,5 +167,5 @@ const Movie = require("../database/schemes/movie");
     setTimeout(addMoviesToDatabase, FETCHINGDELAY, 1);
   }
 
-  module.exports = router
-  module.exports = runBackgroundFetching;
+  module.exports ={ router, runBackgroundFetching};
+  
