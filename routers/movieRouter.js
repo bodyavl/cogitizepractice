@@ -119,6 +119,7 @@ router.get("/:id", async (req, res, next) => {
     try {
         const movieId = req.params.id;
         const movie = await Movie.findOne( {id: movieId} ).select("-_id -__v");
+        movie.genres = movie.genres.split("|").join(", ");
         
         if(movie) {
             res.json(movie);
