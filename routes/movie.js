@@ -65,6 +65,7 @@ router.post("/create", async (req, res, next) => {
 router.get("/TMDB/fill", async (req, res, next) => {
   try {
     setTimeout(addMoviesToDB, FETCHINGDELAY, 1);
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }
