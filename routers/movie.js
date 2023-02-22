@@ -45,7 +45,7 @@ router.get('/list', async (req, res, next) => {
 
    axios.get(`https://api.themoviedb.org/3/movie/550?`, {
     params: {
-      api_key:process.env.TMBD_API_KEY
+      api_key:process.env.TMDB_API_KEY
     }
   }).then((response) => {
     console.log(response.data);
