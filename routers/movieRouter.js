@@ -80,12 +80,15 @@ router.get("/list", async (req, res, next) => {
         for(; index < moviesAmount;) {
             const randMovieIndex = Math.floor(Math.random() * idsListLen);
             const movie = await Movie.findOne( { id:idsList[randMovieIndex].id } ).select("-_id -__v");
+
             
             if(genre == "Any") {
+                movie.genres = movie.genres.split("|").join(", ");
                 moviesToReturn.push(movie);
                 index++;
             }
             else if(movie.genres.includes(genre)) {
+                movie.genres = movie.genres.split("|").join(", ");
                 moviesToReturn.push(movie);
                 index++;
             }
