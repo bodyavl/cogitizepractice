@@ -3,6 +3,7 @@ dotenv.config();
 
 
 const express = require("express");
+const cors = require("cors");
 
 
 const { movieRouter, runBackgroundFetching } = require("./routers/movieRouter");
@@ -23,6 +24,8 @@ const errorHandler = (err, req, res, next) => {
 
 const app = express();
 
+
+app.use(corse( {credentials: true, origin:true} ));
 
 
 app.use("/movie", movieRouter);
