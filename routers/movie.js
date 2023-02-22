@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const Movie = require("../database/schemes/movie");
@@ -61,8 +62,57 @@ router.get('/list', async (req, res, next) => {
      next(error);
    }
    });
-
-   
+   const FETCHINGDELAY = 5000;
+   const iterationCount = 50;
+   async function addMoviesToDatabase(pageIteration = 1) {
+     if (pageIteration > 10000) return;
+     for (let i = pageIteration; i < pageIteration + iterationCount ; i++) {
+       const movieRes = await axios.get(
+         "https://api.themoviedb.org/3/discover/movie",
+         {
+           params: {
+             api_key: process.env.TMDB_API_KEY,
+             with_genres: "28|27|18|35",
+             page: pageIteration,
+           },
+         }
+       );
+       let movieIds = [];
+       movieRes.data.results.forEach((element) => {
+         movieIds.push(element.id);
+       });
+       for (let movieId of movieIds) {
+         try {
+           const response = await axios.get(
+             `https://api.themoviedb.org/3/movie/${movieId}`,
+             {
+               params: {
+                 api_key: process.env.TMDB_API_KEY,
+               },
+             }
+           );
+           const {id,title,genres,run_time,overview,release_date,logo_path,backdrop_path,rating} = response.data;
+           if (overview) {
+             const newMovie = await Movie.create({
+               id: `${id}min`,
+               title,
+               type: "Movie",
+               description: overview,
+               logo: `https://image.tmdb.org/t/p/original${logo_path}`,
+               backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
+               rating,
+               genres,
+               run_time,
+               date: release_date,
+             });
+           }
+         } catch (error) {
+           console.log(error.message);
+         }
+       }
+      }
+       setTimeout(addMoviesToDatabase, FETCHINGDELAY, pageIteration + iterationCount);
+    }
   function runBackgroundFetching() {
     let pageIterator = 1;
     addMoviesToDatabase(pageIterator++)
