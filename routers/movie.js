@@ -37,6 +37,26 @@ router.get("/list", async (req, res, next) => {
   }
 });
 
+router.get(`/list/:genre`, async (req, res, next) => {
+  try {
+    const {genre} = req.params;
+    const options = {};
+
+    if (genre && genresList[genre])
+      options.genres = { $elemMatch: { name: genresList[genre] } };
+
+    const movies = await Movie.find(options).select(
+      "_id type title poster rating genres"
+    );
+    const shuffledMovies = shuffle(movies);
+    if (!shuffledMovies) throw new Error("No movies found");
+
+    res.status(200).json(shuffledMovies.slice(0, 8));
+  } catch (error) {
+    next(error);
+  }
+});
+
   router.get("/getMovieFromTMDB/:id", async (req, res, next) => {
     try {
         const movieId = req.params.id;
