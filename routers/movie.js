@@ -97,15 +97,6 @@ router.get("/list", async (req, res, next) => {
     }
   });
 
-  axios.get(`https://api.themoviedb.org/3/movie/550`, {
-    params: {
-      api_key:process.env.TMDB_API_KEY,
-    }
-  }).then((response) => {
-    console.log(response.data);
-  })
-
-
   const FETCHINGDELAY = 5000;
   const iterationCount = 50;
   async function addMoviesToDatabase(pageIteration = 1) {
