@@ -27,7 +27,10 @@ router.post('/createMovie', async (req, res, next) => {
     next(error);
   }
   });
-
+  const types = {
+    Movie: "Movie",
+    TV: "TV show"
+  }
 const genresList = {
   Any: null,
   Action: "Action",
@@ -37,10 +40,11 @@ const genresList = {
 }
   router.get("/list", async (req, res, next) => {
     try {
-      const {genre} = req.query;
+      const {genre, type} = req.query;
       const options = {};
       if (genre && genresList[genre])
         options.genres = { $elemMatch: { name: genresList[genre] } };
+      if (type && types[type]) options.type = types[type];
       const movies = await Movie.find(options).select( "_id type title poster rating genres");
       const shuffledMovies = shuffle(movies);
       if (!shuffledMovies) throw new Error("No movies found");
@@ -92,7 +96,7 @@ const genresList = {
                },
              }
            );
-           const {id,title,genres,run_time,overview,release_date,logo_path,backdrop_path,rating} = response.data;
+           const {id,title,genres,run_time,overview,release_date,logo_path,backdrop_path,vote_average,} = response.data;
            if (overview) {
              const newMovie = await Movie.create({
                id,
@@ -101,7 +105,7 @@ const genresList = {
                description: overview,
                logo: `https://image.tmdb.org/t/p/original${logo_path}`,
                backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
-               rating,
+               rating: vote_average,
                genres,
                run_time,
                date: release_date,
