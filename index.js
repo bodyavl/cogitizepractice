@@ -1,13 +1,15 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
+const cors = require('cors');
 const express = require("express");
-const database = require("./database");
+require("./database")
 const bodyParser = require("body-parser");
 const { router, runBackgroundFetching } = require('./routers/movie');
 
 const app = express();
 
+app.use(cors({ credentials: true, origin: true }));
 app.use(bodyParser.json({ type: "application/json" }));
 app.use('/movie', router);
 
