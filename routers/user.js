@@ -17,7 +17,7 @@ router.post('/signup', async (req, res, next) => {
         const user = User.create({ email, password: hashedPassword, movies: 0, tv: 0, suggestions: 0, man_suggestions: 0});
         // Log the user in and redirect to the dashboard
         // req.session.userId = user._id;
-        res.status(200).send('OK');
+        res.status(200).send({ token: 'test123'});
     } catch (error) {
         next(error);
     }
@@ -28,14 +28,12 @@ router.post('/login', async (req, res, next) => {
         const { email, password } = req.body;
         // Find the user by email in MongoDB
         const user = await User.findOne({ email });
-        
-        const hashedPassword = await bcrypt.hash(password, 10);
         // Compare the hashed password with the user's input
-        const isMatch = await bcrypt.compare(hashedPassword, user.password);
+        const isMatch = await bcrypt.compare(password, user.password);
         if (isMatch) {
         // Log the user in and redirect to the dashboard
         req.session.userId = user._id;
-        res.status(200).send('OK');
+        res.status(200).send();
         } else throw new Error("Invalid email or password");
     } catch (error) {
         next(error);
