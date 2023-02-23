@@ -5,6 +5,9 @@ dotenv.config();
 const express = require("express");
 const cors = require("cors");
 
+// for loading react build
+const fs = require("fs");
+
 
 const { movieRouter, runBackgroundFetching } = require("./routers/movieRouter");
 
@@ -31,7 +34,17 @@ app.use(cors( {credentials: true, origin:true} ));
 app.use("/movie", movieRouter);
 
 
-
+// for loading react build
+app.use(express.static(__dirname +"/build/static"));
+app.get("/", (req, res) => {
+    try {
+        const index = fs.readFileSync("./build/index.html");
+        res.status(200).send(index.toString());
+    }
+    catch(err) {
+        next(err);
+    }
+});
 // app.get("/fetching", (req, res) => {
 //     try {
 //         runBackgroundFetching();
