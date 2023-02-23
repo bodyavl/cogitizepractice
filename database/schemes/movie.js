@@ -7,7 +7,7 @@ const blogSchema = new Schema({
   type: {type: String,enum: ["Movie"],required: true,},
   description: String,
   rating: Number,
-  genre: [genreSchema], 
+  genre: [blogSchema], 
   run_time: Number,
   backdrop: String,
   logo: String,
