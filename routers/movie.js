@@ -1,8 +1,10 @@
 
+
 const express = require('express');
 const router = express.Router();
 const Movie = require("../database/schemes/movie");
 const axios= require("axios").default;
+const { shuffle } = require("../utils");
 
 const genresList = {
   Any: null,
@@ -11,31 +13,20 @@ const genresList = {
   Drama: "Drama",
   Comedy: "Comedy"
 }
-const types = {
-  Movie: "Movie",
-  TV: "TV show"
-}
-router.get("/list", async (req, res, next) => {
-  try {
-    const { genre, type } = req.query;
-
-    const options = {};
-
-    if (genre && genresList[genre])
-      options.genres = { $elemMatch: { name: genresList[genre] } };
-
-    if (type && types[type]) options.type = types[type];
-
-    const movies = await Movie.find(options).select(
-      "_id type title poster rating genres"
-    );
-    const shuffledMovies = shuffle(movies);
-    if (!shuffledMovies) throw new Error("No movies found");
-    res.status(200).json(shuffledMovies.slice(0, 8));
-  } catch (error) {
-    next(error);
-  }
-});
+  router.get("/list", async (req, res, next) => {
+    try {
+      const {genre} = req.query;
+      const options = {};
+      if (genre && genresList[genre])
+        options.genres = { $elemMatch: { name: genresList[genre] } };
+      const movies = await Movie.find(options).select( "_id type title poster rating genres");
+      const shuffledMovies = shuffle(movies);
+      if (!shuffledMovies) throw new Error("No movies found");
+      res.status(200).json(shuffledMovies.slice(0, 8));
+    } catch (error) {
+      next(error);
+    }
+  });
  router.get("/:_id", async(req,res,next) => {
    try{
      const {_id} = req.params;
@@ -52,29 +43,31 @@ router.get("/list", async (req, res, next) => {
    
  });
  router.post('/createMovie', async (req, res, next) => {
-   try{
-    console.log("Create movie request",req.body);
-     const {id ,title, author, description, country, rating, genre,backdrop,logo} = req.body;
-     const movie =  await Movie.create ({
-       id,
-       title,
-       description,
-       rating, 
-       genre,
-       run_time,
-       backdrop,
-       logo,
-     });
-     console.log("Movie created :", movie);
-     res.json(movie);
-   } catch (error) {
-     next(error);
-   }
-   });
+  try{
+   console.log("Create movie request",req.body);
+    const {id ,title,  description,  rating, genre,backdrop,logo} = req.body;
+    const movie =  await Movie.create ({
+      id,
+      title,
+      description,
+      rating, 
+      genre,
+      run_time,
+      backdrop,
+      logo,
+    });
+    console.log("Movie created :", movie);
+    res.json(movie);
+  } catch (error) {
+    next(error);
+  }
+  });
+
+
    const FETCHINGDELAY = 5000;
    const iterationCount = 50;
    async function addMoviesToDatabase(pageIteration = 1) {
-     if (pageIteration > 1000) return;
+     if (pageIteration > 20000) return;
      for (let i = pageIteration; i < pageIteration + iterationCount ; i++) {
        const movieRes = await axios.get(
          "https://api.themoviedb.org/3/discover/movie",
@@ -116,7 +109,7 @@ router.get("/list", async (req, res, next) => {
              });
            }
          } catch (error) {
-           console.log(error.message);
+          if (error.code !== 11000) console.log(JSON.stringify(error));
          }
        }
       }
