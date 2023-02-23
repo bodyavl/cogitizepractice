@@ -59,13 +59,13 @@ router.get("/list", async (req, res, next) => {
     }
 });
   
-  router.get(`/:id`, async (req,res,next)=>{
+  router.get(`/:_id`, async (req,res,next)=>{
     try {
-      const { id } = req.params;
-      const movie = await Movie.find({"id":id});
-      if(!movie){
-        throw new Error("Movie not found");
-      }
+    const { _id } = req.params
+    const movie = await Movie.findById(_id);	 
+    if(movie == null){
+      throw new Error("Movie not found");	      
+    }
       else res.json(movie);
     } catch (error) {
       next(error);
