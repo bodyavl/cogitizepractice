@@ -6,6 +6,7 @@ const axios = require("axios").default;
 const router = express.Router();
 
 const Movie = require("../db/models/movie");
+const User = require('../db/models/user');
 const { shuffle } = require("../utils");
 
 router.post("/create", async (req, res, next) => {
@@ -58,7 +59,6 @@ router.get("/list", async (req, res, next) => {
     );
     const shuffledMovies = shuffle(movies);
     if (!shuffledMovies) throw new Error("No movies found");
-
     res.status(200).json(shuffledMovies.slice(0, 8));
   } catch (error) {
     next(error);
