@@ -7,7 +7,7 @@ const axios= require("axios").default;
 router.get("/list", async (req, res, next) => {
   try {
     const { genre } = req.query;
-    
+    let a;
     if (!genre) {
       const movies = await Movie.find().select("_id title poster rating genres");
       const shuffledMovies = shuffle(movies);
