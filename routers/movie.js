@@ -52,8 +52,8 @@ router.post('/createMovie', async (req, res, next) => {
     // Create a GET route for getting all movies
     router.get('/list', async (req, res, next) => {
       try {
-        req.query.genreIdentifier;
-        //const { genre } = req.query;
+        //req.query.genreIdentifier;
+        const { genre } = req.query;
         const foundGenre = genre ? genreIdntifier[genre] : undefined;
 
         if (!foundGenre) {
