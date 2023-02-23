@@ -4,6 +4,7 @@ dotenv.config();
 const express = require("express");
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const User = require('../db/models/user');
 
@@ -16,8 +17,9 @@ router.post('/signup', async (req, res, next) => {
         // Create a new user document in MongoDB
         const user = User.create({ email, password: hashedPassword, movies: 0, tv: 0, suggestions: 0, man_suggestions: 0});
         // Log the user in and redirect to the dashboard
-        // req.session.userId = user._id;
-        res.status(200).send({ token: 'test123'});
+        req.session.userId = user._id;
+        const token = jwt.sign({ userId: user._id }, 'my_secret_key');
+        res.status(200).send(token);
     } catch (error) {
         next(error);
     }
@@ -33,7 +35,8 @@ router.post('/login', async (req, res, next) => {
         if (isMatch) {
         // Log the user in and redirect to the dashboard
         req.session.userId = user._id;
-        res.status(200).send();
+        const token = jwt.sign({ userId: user._id }, 'my_secret_key');
+        res.status(200).send(token);
         } else throw new Error("Invalid email or password");
     } catch (error) {
         next(error);
