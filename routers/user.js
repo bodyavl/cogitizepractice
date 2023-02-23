@@ -28,8 +28,10 @@ router.post('/login', async (req, res, next) => {
         const { email, password } = req.body;
         // Find the user by email in MongoDB
         const user = await User.findOne({ email });
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
         // Compare the hashed password with the user's input
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(hashedPassword, user.password);
         if (isMatch) {
         // Log the user in and redirect to the dashboard
         req.session.userId = user._id;
