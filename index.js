@@ -5,6 +5,8 @@ const movieRouter = require("./routers/movie");
 const database = require("./database");
 const axios = require("axios").default;
 
+const cors = require("cors");
+
 
 
 const port = 3000;
@@ -24,6 +26,8 @@ app.get("/", (req, res) => {
 });
 
   app.use("/movie", movieRouter.router);
+
+  app.use(cors({ credentials: true, origin: true }));
 
   app.use(errorHandler);
 
