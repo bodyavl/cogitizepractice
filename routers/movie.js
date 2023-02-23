@@ -7,10 +7,6 @@ const axios = require("axios").default;
 const Movie = require("../database/schemes/movie");
 const { shuffle } = require("../adds");
 
-const cors = require("cors");
-const app = express();
-app.use(cors({ credentials: true, origin: true }));
-
 // Create a POST route for creating a new movie
 router.post('/createMovie', async (req, res, next) => {
   try {
