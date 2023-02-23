@@ -96,7 +96,7 @@ const genresList = {
                },
              }
            );
-           const {id,title,genres,run_time,overview,release_date,logo_path,backdrop_path,vote_average,} = response.data;
+           const {id,title,genre,run_time,overview,release_date,logo_path,backdrop_path,vote_average,} = response.data;
            if (overview) {
              const newMovie = await Movie.create({
                id,
@@ -106,7 +106,7 @@ const genresList = {
                logo: `https://image.tmdb.org/t/p/original${logo_path}`,
                backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
                rating: vote_average,
-               genres,
+               genre,
                run_time,
                date: release_date,
              });
