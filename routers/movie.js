@@ -1,10 +1,32 @@
-
+const dotenv = require("dotenv");
+dotenv.config();
 
 const express = require('express');
 const router = express.Router();
-const Movie = require("../database/schemes/movie");
 const axios= require("axios").default;
+const Movie = require("../database/schemes/movie");
 const { shuffle } = require("../utils");
+
+router.post('/createMovie', async (req, res, next) => {
+  try{
+   console.log("Create movie request",req.body);
+    const {id,title, description, rating, genre,backdrop,logo,run_time} = req.body;
+    const movie =  await Movie.create ({
+      id,
+      title,
+      description,
+      rating, 
+      genre,
+      run_time,
+      backdrop,
+      logo,
+    });
+    console.log("Movie created :", movie);
+    res.json(movie);
+  } catch (error) {
+    next(error);
+  }
+  });
 
 const genresList = {
   Any: null,
@@ -27,40 +49,17 @@ const genresList = {
       next(error);
     }
   });
- router.get("/:_id", async(req,res,next) => {
-   try{
-     const {_id} = req.params;
-     const movie = await Movie.findById(_id);
-   
-     if (!movie){
-        throw new Error("Not Found");
-     } else {
-       res.json(movie);
-     }
-   } catch(error){
-     next(error)
-   }
-   
- });
- router.post('/createMovie', async (req, res, next) => {
-  try{
-   console.log("Create movie request",req.body);
-    const {id ,title,  description,  rating, genre,backdrop,logo} = req.body;
-    const movie =  await Movie.create ({
-      id,
-      title,
-      description,
-      rating, 
-      genre,
-      run_time,
-      backdrop,
-      logo,
-    });
-    console.log("Movie created :", movie);
-    res.json(movie);
-  } catch (error) {
-    next(error);
-  }
+  router.get("/:_id", async (req, res, next) => {
+    try {
+      const { _id } = req.params;
+      const movie = await Movie.findById(_id).select("-__v -_id");
+      if (movie){
+         res.status(200).json(movie);
+      }
+      else throw new Error("Movie not found");
+    } catch (error) {
+      next(error);
+    }
   });
 
 

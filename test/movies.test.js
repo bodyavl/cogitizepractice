@@ -12,13 +12,13 @@ describe("Movies API",()=>{
     })
     let movieId;
 it("should create a movie", async()=>{
-    const res = await request(app).post("/movie/createMovie").set("Accept", "application/json").send({
+    const res = await request(app).post("/movie/create").set("Accept", "application/json").send({
 
         title:"test title",
        description: "test description",
        rating:7,
         genre:"test genre",
-        run_time: "test run_time",
+        run_time: 186,
         backdrop: "test backdrop",
         logo: "test logo",
    });
@@ -27,7 +27,7 @@ it("should create a movie", async()=>{
         expect(res.body.description).toEqual("test description");
         expect(res.body.rating).toEqual(7);
         expect(res.body.genre).toEqual("test genre");
-        expect(res.body.run_time).toEqual("test run_time");
+        expect(res.body.run_time).toEqual(186);
         expect(res.body.backdrop).toEqual("test backdrop");
         expect(res.body.logo).toEqual("test logo");
        movieId = res.body._id;
