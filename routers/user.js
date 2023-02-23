@@ -19,7 +19,7 @@ router.post('/signup', async (req, res, next) => {
         // Log the user in and redirect to the dashboard
         req.session.userId = user._id;
         const token = jwt.sign({ userId: user._id }, 'my_secret_key');
-        res.status(200).send(token);
+        res.status(200).send({token});
     } catch (error) {
         next(error);
     }
@@ -36,7 +36,7 @@ router.post('/login', async (req, res, next) => {
         // Log the user in and redirect to the dashboard
         req.session.userId = user._id;
         const token = jwt.sign({ userId: user._id }, 'my_secret_key');
-        res.status(200).send(token);
+        res.status(200).send({token});
         } else throw new Error("Invalid email or password");
     } catch (error) {
         next(error);
