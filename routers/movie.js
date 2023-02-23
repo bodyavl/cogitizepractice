@@ -5,32 +5,37 @@ const axios = require('axios').default;
 const { shuffle } = require("../shuffle");
 
 const Movie = require("../database/schemes/movie");
+
+const genresList = {
+  Any: null,
+  Action: "Action",
+  Horror: "Horror",
+  Drama: "Drama",
+  Comedy: "Comedy"
+}
   
-  router.get("/list", async (req, res, next) => {
-    try {
-      const { genre } = req.query;
-      
-      if (!genre) {
-        const movies = await Movie.find().select(
-          "_id title poster rating genres"
-        );
-        const shuffledMovies = shuffle(movies);
-        if (movies) res.json(shuffledMovies.slice(0, 8));
-        else throw new Error("Movies not found");
-      } 
-      else {
-        const movies = await Movie.find({
-          genres: { $elemMatch: { name: genre } },
-        }).select("_id title poster rating genres")
-  
-        const shuffledMovies = shuffle(movies);
-        if (shuffledMovies) res.json(shuffledMovies.slice(0, 8));
-        else throw new Error("Movies not found");
-      }
-    } catch (error) {
-      next(error);
-    }
-  });
+router.get("/list", async (req, res, next) => {
+  try {
+    const { genre, type } = req.query;
+
+    const options = {};
+
+    if (genre && genresList[genre])
+      options.genres = { $elemMatch: { name: genresList[genre] } };
+
+    if (type && types[type]) options.type = types[type];
+
+    const movies = await Movie.find(options).select(
+      "_id type title poster rating genres"
+    );
+    const shuffledMovies = shuffle(movies);
+    if (!shuffledMovies) throw new Error("No movies found");
+
+    res.status(200).json(shuffledMovies.slice(0, 8));
+  } catch (error) {
+    next(error);
+  }
+});
 
   router.get("/getMovieFromTMDB/:id", async (req, res, next) => {
     try {
