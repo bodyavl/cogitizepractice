@@ -69,7 +69,7 @@ router.post('/createMovie', async (req, res, next) => {
 
 
 const genresList = {
-  Any: null,
+  Any: "Any",
   Action: "Action",
   Horror: "Horror",
   Drama: "Drama",
