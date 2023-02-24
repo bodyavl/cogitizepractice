@@ -35,7 +35,7 @@ app.use("/movie", movieRouter);
 
 
 // for loading react build
-app.use(express.static(__dirname +"/build/static"));
+app.use(express.static("./build/static"));
 app.get("/", (req, res) => {
     try {
         const index = fs.readFileSync("./build/index.html");
