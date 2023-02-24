@@ -7,10 +7,48 @@ const axios = require("axios").default;
 const Movie = require("../database/schemes/movie");
 const { shuffle } = require("../adds");
 
+
+
+router.get("/axios/:id", async (req, res, next) => {
+  try {
+      const movieId = Number(req.params.id);
+      const axiosMovie = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, 
+      {
+          params: {
+              api_key: process.env.TMDB_API_KEY
+          }
+      });
+      res.json(axiosMovie.data);            
+  }
+  catch(err) {
+      next(err);
+  }
+});
+
+router.get("/:id", async (req, res, next) => {
+  try {
+      const movieId = req.params.id;
+      const movie = await Movie.findOne( {id: movieId} ).select("-_id -__v");
+      movie.genres = movie.genres.split("|").join(", ");
+      
+      if(movie) {
+          res.json(movie);
+      }
+      else {
+          throw new Error("Incorrect movie id!");
+      }
+      
+  }
+  catch(err) {
+      next(err);
+  }
+});
+
+
 // Create a POST route for creating a new movie
 router.post('/createMovie', async (req, res, next) => {
   try {
-    const { id, title, author, description, releaseYear, genre } = req.body;
+    const { id, title, author, description, releaseYear, genre, runTime } = req.body;
 
     const movie = await Movie.create ({
       id,
@@ -18,7 +56,8 @@ router.post('/createMovie', async (req, res, next) => {
       author,
       description,
       releaseYear,
-      genre
+      genre,
+      runTime
     });
     console.log("Movie created:", movie);
     await movie.save();
@@ -28,20 +67,20 @@ router.post('/createMovie', async (req, res, next) => {
   }
 });
 
-  const genresList = {
-    Any: null,
-    Action: "Action",
-    Horror: "Horror",
-    Drama: "Drama",
-    Comedy: "Comedy"
-  }
+const GENRES = {
+  "Any": "Any",
+  "Drama": "Drama",
+  "Horror": "Horror",
+  "Action": "Action",
+  "Comedy": "Comedy"
+}
     
   router.get("/list", async (req, res, next) => {
     try {
       const { genre } = req.query;
       const { amount } = req.query;
 
-      if(!genresList[genre]) throw new Error("Incorrect genre!");
+      if(!GENRES[genre]) throw new Error("Incorrect genre!");
       
       const moviesAmount = amount || 10;
         let moviesToReturn = [];
@@ -78,11 +117,11 @@ router.post('/createMovie', async (req, res, next) => {
         const {genre} = req.params;
         const options = {};
     
-        if (genre && genresList[genre])
-          options.genres = { $elemMatch: { name: genresList[genre] } };
+        if (genre && GENRES[genre])
+          options.genres = { $elemMatch: { name: GENRES[genre] } };
     
         const movies = await Movie.find(options).select(
-          "_id type title poster rating genres"
+          " type title poster rating genres runTime"
         );
         const shuffledMovies = shuffle(movies);
         if (!shuffledMovies) throw new Error("No movies found");
