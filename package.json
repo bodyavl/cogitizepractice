@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "SET NODE_ENV=Production & node index.js",
-    "start:dev": "SET NODE_ENV=Development & nodemon index.js"
+    "start": "set NODE_ENV=Production & node index.js",
+    "start:dev": "set NODE_ENV=Development & nodemon index.js"
   },
   "repository": {
     "type": "git",
