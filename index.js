@@ -1,62 +1,30 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
-const bodyParser = require("body-parser");
-const database = require("./database");
-const Movie = require("./database/schemes/movie");
-const PORT = 3000;
+const cors = require("cors");
+const fs = require("fs");
 
+const { movieRouter, runBackgroundFetching } = require("./routers/movieRou");
 
 const errorHandler = (err, req, res, next) => {
-    const errMsg = err.message;
+    const msg = err.message;
+    console.log("Error: ", msg);
     res.header("Content-Type", "application/json");
-    console.log("Error: ", errMsg);
-    res.status(500).send(errMsg);
+    res.status(500).send(msg);
 }
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(cors( {credentials: true, origin:true} ));
+app.use("/movie", movieRouter);
+app.use(express.static(__dirname +"/build/static"));
 
-app.get("/getMovie/:id", async (req, res, next) => {
+app.get("/", (req, res) => {
     try {
-        const movieId = req.params.id;
-        const movie = await Movie.findById(movieId);
-        console.log(movie);
-        
-        if(movie != null) {
-            res.json(movie);
-        }
-        else {
-            throw new Error("Incorrect movie id!");
-        }
-    } catch(err) {
-        next(err);
+        const index = fs.readFileSync("./build/index.html");
+        res.status(200).send(index.toString());
     }
-});
-
-app.get("/getMovies", async (req, res, next) => {
-    try {
-        const moviesList = await Movie.find({});
-        console.log(moviesList);
-        res.json(moviesList);
-    } catch(err) {
-        next(err);
-    }
-});
-
-app.post("/addMovie", async (req, res, next) => {
-    console.log(req.body);
-    try {
-        const newMovie = await Movie.create(
-            {
-                title: req.body.title,
-                author: req.body.author,
-                description: req.body.description
-            }
-        );
-        console.log(`Movie ${req.body.title} created: `, newMovie);
-
-        res.json(newMovie);
-    } catch(err) {
+    catch(err) {
         next(err);
     }
 });
@@ -64,9 +32,10 @@ app.post("/addMovie", async (req, res, next) => {
 app.use(errorHandler);
 
 app.listen(
-    PORT, 
-    (err) => {
+    process.env.PORT, 
+    async (err) => {
+        console.log(process.env.NODE_ENV, "started!");
         if(err) console.log(err);
-        else console.log(`Server started on port ${PORT}!`);
+        else console.log(`Server started on port ${process.env.PORT}!`);
     }
 );
