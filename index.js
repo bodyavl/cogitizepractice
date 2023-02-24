@@ -3,7 +3,6 @@ dotenv.config();
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
-const db = require("./database/index");
 
 const { movieRouter, runBackgroundFetching } = require("./routers/movieRou");
 
