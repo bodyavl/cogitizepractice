@@ -1,30 +1,72 @@
-const dotenv = require('dotenv').config();
+const dotenv = require("dotenv");
+dotenv.config();
+
+
 const express = require("express");
-const bodyParser = require("body-parser");
-const movieRouter = require("./routers/movie");
-const database = require("./database");
-const axios = require("axios").default;
+const cors = require("cors");
 
-const port = 3000;
+// for loading react build
+const fs = require("fs");
 
-const app = express();
-app.use(bodyParser.json({ type: "application/json" }));
 
-function errorHandler(error, req, res, next) {
-  res.header("Content-Type", "application/json");
-  console.log("Error occured:", error.message);
-  res.status(500).send(error.message);
+const { movieRouter, runBackgroundFetching } = require("./routers/movieRouter");
+
+
+
+
+const errorHandler = (err, req, res, next) => {
+    const msg = err.message;
+    console.log("Error: ", msg);
+
+    res.header("Content-Type", "application/json");
+    res.status(500).send(msg);
 }
 
+
+
+
+const app = express();
+
+
+app.use(cors( {credentials: true, origin:true} ));
+
+
+app.use("/movie", movieRouter);
+
+
+// for loading react build
+app.use(express.static("./build/static"));
 app.get("/", (req, res) => {
-  console.log(req.query);
-  res.send("Hello World!");
+    try {
+        const index = fs.readFileSync("./build/index.html");
+        res.status(200).send(index.toString());
+    }
+    catch(err) {
+        next(err);
+    }
 });
+// app.get("/fetching", (req, res) => {
+//     try {
+//         runBackgroundFetching();
+//         res.sendStatus(200);
+//     }
+//     catch(err) {
+//         next(err);
+//     }
+// });
 
-  app.use("/movie", movieRouter);
 
-  app.use(errorHandler);
 
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}!`);
-  });
+app.use(errorHandler);
+
+
+
+app.listen(
+    process.env.PORT, 
+    async (err) => {
+        console.log(process.env.NODE_ENV, "started!");
+        if(err) console.log(err);
+        else console.log(`Server started on port ${process.env.PORT}!`);
+        // runBackgroundFetching();
+    }
+);
