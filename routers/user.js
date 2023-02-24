@@ -33,10 +33,10 @@ router.post('/login', async (req, res, next) => {
         // Compare the hashed password with the user's input
         const isMatch = await bcrypt.compare(password, user.password);
         if (isMatch) {
-        // Log the user in and redirect to the dashboard
-        req.session.userId = user._id;
-        const token = jwt.sign({ userId: user._id }, 'my_secret_key');
-        res.status(200).send({token: 'test123'});
+            // Log the user in and redirect to the dashboard
+            req.session.userId = user._id;
+            const token = jwt.sign({ userId: user._id }, 'my_secret_key');
+            res.status(200).send({token: 'test123'});
         } else throw new Error("Invalid email or password");
     } catch (error) {
         next(error);
