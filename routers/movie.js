@@ -19,7 +19,7 @@ router.post("/create", async (req, res, next) => {
       poster: req.body.poster,
       backdrop: req.body.backdrop,
       tagline: req.body.tagline,
-      genre: req.body.genre,
+      genres: req.body.genres,
       date: req.body.date,
       runtime: req.body.runtime,
       rating: req.body.rating,
@@ -49,7 +49,7 @@ router.get("/list", async (req, res, next) => {
     const options = {};
 
     if (genre && genresList[genre])
-      options.genres = { $elemMatch: { name: genresList[genre] } };
+      options.genre = { $elemMatch: { name: genresList[genre] } };
 
     if (type && types[type]) options.type = types[type];
 
@@ -79,7 +79,7 @@ router.get("/:id", async (req, res, next) => {
 const FETCHINGDELAY = 5000;
 const iterationCount = 50;
 async function addMoviesToDatabase(pageIteration = 1) {
-  if (pageIteration > 20000) return;
+  if (pageIteration > 500) return;
   for (let i = 1; i < pageIteration + iterationCount ; i++) {
     const movieRes = await axios.get(
       "https://api.themoviedb.org/3/discover/movie",
@@ -109,9 +109,8 @@ async function addMoviesToDatabase(pageIteration = 1) {
           id,
           title,
           poster_path,
-          backdrop_path,
           vote_average,
-          genre,
+          genres,
           runtime,
           tagline,
           overview,
@@ -125,10 +124,10 @@ async function addMoviesToDatabase(pageIteration = 1) {
             tagline,
             description: overview,
             poster: `https://image.tmdb.org/t/p/original${poster_path}`,
-            backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
+            
             rating: vote_average,
             runtime,
-            genre,
+            genres,
             date: release_date,
           });
         }
