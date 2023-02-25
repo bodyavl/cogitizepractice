@@ -2,12 +2,12 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const express = require('express');
-const router = express.Router();
+const movieRouter = express.Router();
 const axios= require("axios").default;
 const Movie = require("../database/schemes/movie");
 const { shuffle } = require("../utils");
 
-router.post('/createMovie', async (req, res, next) => {
+movieRouter.post('/createMovie', async (req, res, next) => {
   try{
    console.log("Create movie request",req.body);
     const {id,title, description, rating, genres,poster,logo,run_time} = req.body;
@@ -38,7 +38,7 @@ const genresList = {
   Drama: "Drama",
   Comedy: "Comedy"
 }
-router.get("/list", async (req, res, next) => {
+movieRouter.get("/list", async (req, res, next) => {
   try {
     const { genre, type } = req.query;
 
@@ -57,7 +57,7 @@ router.get("/list", async (req, res, next) => {
     next(error);
   }
 });
-  router.get("/:id", async (req, res, next) => {
+  movieRouter.get("/:id", async (req, res, next) => {
     try {
         const movieId = req.params["id"];
         res.json(movie);
@@ -65,6 +65,7 @@ router.get("/list", async (req, res, next) => {
         next(error);
     }
 });
+module.exports = movieRouter ;
 
 
  
