@@ -9,7 +9,7 @@ const app = express();
 app.use(bodyParser.json({ type: 'application/json' }));
 
  
-const port = process.env.PORT;
+
 
 function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
@@ -22,7 +22,8 @@ app.use("/movie", movieRouter);
 
 app.use(errorHandler);
 
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(process.env.node_env, "started")
+  console.log(`On port ${port}`);
   console.log(`Example app listening on port ${port}`)
 });
