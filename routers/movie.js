@@ -96,7 +96,7 @@ const genresList = {
                },
              }
            );
-           const {id,title,genres,run_time,overview,release_date,logo_path,backdrop_path,vote_average,} = response.data;
+           const {id,title,genres,run_time,overview,release_date,logo_path,poster_path,vote_average,} = response.data;
            if (overview) {
              const newMovie = await Movie.create({
                id,
@@ -104,7 +104,7 @@ const genresList = {
                type: "Movie",
                description: overview,
                logo: `https://image.tmdb.org/t/p/original${logo_path}`,
-              poster: `https://image.tmdb.org/t/p/original${backdrop_path}`,
+              poster: `https://image.tmdb.org/t/p/original${poster_path}`,
                rating: vote_average,
                genres,
                run_time,
