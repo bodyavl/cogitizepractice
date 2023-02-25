@@ -1,6 +1,6 @@
 const dotenv=require("dotenv");
 dotenv.config();
-const cors = require("cors");
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const database = require ("./database");
@@ -17,7 +17,7 @@ console.log("Error:", error.message);
 res.status(500).send(error.message);
 }
 
-app.use(cors( {credentials: true, origin:true} ));
+
   app.use(errorTamer);
 
   app.listen(
