@@ -2,9 +2,9 @@
 const { request } = require('express');
 const express = require('express');
 const router = express.Router();
-const Movie = require("../database/schemas/movie.js");
-const getRandomArbitrary = require('../util/random.js');
-const shuffle = require('../util/shuffle.js');
+const Movie = require("../database/schemes/movie.js");
+const getRandomArbitrary = require('../more/random.js');
+const shuffle = require('../more/shuffle.js');
 
 router.get("/list", async (req, res, next) => {
     try {
