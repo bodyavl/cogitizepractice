@@ -3,8 +3,7 @@ dotenv.config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const database = require ("./database");
-const { router } = require("./routers/movie");
-
+const movieRouter = require("./routers/movie");
 
 const app = express();
 app.use(bodyParser.json({ type: 'application/json' }));
@@ -19,7 +18,7 @@ function errorHandler(error, req, res, next) {
 
 }
 
-app.use("/movie", router);
+app.use("/movie", movieRouter);
 
 app.use(errorHandler);
 
