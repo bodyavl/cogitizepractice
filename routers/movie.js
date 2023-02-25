@@ -1,7 +1,7 @@
 const { request } = require('express');
 const express = require('express');
 const router = express.Router();
-const Movie = require("../database/schemas/movie.js");
+const Movie = require("../database/schemes/movie.js");
 const getRandomArbitrary = require('../util/random.js');
 const shuffle = require('../util/shuffle.js');
 
