@@ -5,7 +5,7 @@ const genreSchema = new Schema(
   {
     name: String,
   },
-  { _id: false }
+  { _id: true }
 );
 
 const blogSchema = new Schema({

@@ -1,5 +1,6 @@
 const dotenv=require("dotenv");
 dotenv.config();
+const cors = require("cors");
 const express = require('express');
 const bodyParser = require('body-parser');
 const database = require ("./database");
@@ -16,11 +17,15 @@ console.log("Error:", error.message);
 res.status(500).send(error.message);
 }
 
-
+app.use(cors( {credentials: true, origin:true} ));
   app.use(errorTamer);
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-  runBackgroundFetching();
-});
+  app.listen(
+    process.env.PORT, 
+    async (err) => {
+        console.log(process.env.NODE_ENV, "started!");
+        if(err) console.log(err);
+        else console.log(`Server started on port ${process.env.PORT}!`);
+        
+    }
+);
