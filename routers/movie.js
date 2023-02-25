@@ -52,18 +52,14 @@ const genresList = {
       next(error);
     }
   });
-  router.get("/:_id", async (req, res, next) => {
+  router.get("/:id", async (req, res, next) => {
     try {
-      const { _id } = req.params;
-      const movie = await Movie.findById(_id).select("-__v -_id");
-      if (movie){
-         res.status(200).json(movie);
-      }
-      else throw new Error("Movie not found");
+        const movieId = req.params["id"];
+        res.json(movie);
     } catch (error) {
-      next(error);
+        next(error);
     }
-  });
+});
 
 
    const FETCHINGDELAY = 5000;
