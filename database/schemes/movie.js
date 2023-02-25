@@ -13,10 +13,11 @@ const blogSchema = new Schema({
   title:  String, 
   type: {type: String,enum: ["Movie"],required: true,},
   description: String,
+  poster: String,
   rating: Number,
   genres: [genreSchema],
   run_time: Number,
-  poster: String,
+  rating: Number,
   logo: String,
   date: { type: Date, required: false },
 });
