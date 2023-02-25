@@ -1,7 +1,7 @@
 //mongodb+srv://Skyba:<password>@cogitizepractice.9lnnjje.mongodb.net/?retryWrites=true&w=majority
 
 const mongoose = require("mongoose");
-
+mongoose.set('strictQuery', true);
 function connect() {
     try {
         mongoose.connect(process.env.DATABASE_URL, {
