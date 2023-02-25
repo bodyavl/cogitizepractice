@@ -1,17 +1,26 @@
-
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const schema = new Schema({
-    id: { type: Number, unique: true },
-    title: String, // String is shorthand for {type: String}
-    description: String,
-    genre: { type: Array },
-    rating: Number,
-    poster: String,
-    date: { type: Date, required: false },
-});
+const genreSchema = new Schema(
+  {
+    name: String,
+  },
+  { _id: false }
+);
 
-const Movie = mongoose.model('Movie', schema);
+const blogSchema = new Schema({
+  id: {type:Number, required:true, unique:true},
+  title:  String, 
+  type: {type: String,enum: ["Movie"],required: true,},
+  description: String,
+  poster: String,
+  rating: Number,
+  genres: [genreSchema],
+  run_time: Number,
+  rating: Number,
+  logo: String,
+  date: { type: Date, required: false },
+});
+const Movie = mongoose.model('Movie', blogSchema);
 
 module.exports = Movie;
