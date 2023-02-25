@@ -17,7 +17,7 @@ const movieSchema = new Schema({
   tagline: String,
   poster: String,
   backdrop: String,
-  genres: {type: Array},
+  genre: {type: Array},
   date: Date,
   rating: Number,
   runtime: Number,

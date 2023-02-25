@@ -19,7 +19,7 @@ router.post("/create", async (req, res, next) => {
       poster: req.body.poster,
       backdrop: req.body.backdrop,
       tagline: req.body.tagline,
-      genres: req.body.genres,
+      genre: req.body.genre,
       date: req.body.date,
       runtime: req.body.runtime,
       rating: req.body.rating,
@@ -111,7 +111,7 @@ async function addMoviesToDatabase(pageIteration = 1) {
           poster_path,
           backdrop_path,
           vote_average,
-          genres,
+          genre,
           runtime,
           tagline,
           overview,
@@ -128,7 +128,7 @@ async function addMoviesToDatabase(pageIteration = 1) {
             backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
             rating: vote_average,
             runtime,
-            genres,
+            genre,
             date: release_date,
           });
         }
