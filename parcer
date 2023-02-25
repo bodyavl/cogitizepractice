@@ -1,0 +1,40 @@
+
+const dotenv = require("dotenv");
+dotenv.config();
+const axios = require("axios").default;
+const database = require("./database/index");
+const Movie = require("./database/schemes/movie");
+const { post } = require("./routers/movie");
+
+async function parser() {
+    for (let i = 0; i < 246; i++) {
+        try {
+            const result = await axios.get(`https://api.themoviedb.org/3/movie/${i}?`, {
+                params: {
+                    api_key: process.env.TMBD_API_KEY
+                }
+            })
+            const {id,title,genres,run_time,overview,release_date,logo_path,poster_path,vote_average,} = response.data;
+              const newMovie = await Movie.create({
+                id,
+                title,
+                type: "Movie",
+                description: overview,
+                logo: `https://image.tmdb.org/t/p/original${logo_path}`,
+               poster: `https://image.tmdb.org/t/p/original${poster_path}`,
+                rating: vote_average,
+                genres,
+                run_time,
+                date: release_date,
+              });
+
+
+
+            console.log(id);
+        }
+        catch (error) {
+            console.log("not found");
+        }
+    }
+}
+parser();
