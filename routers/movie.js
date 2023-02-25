@@ -38,21 +38,22 @@ const genresList = {
   Drama: "Drama",
   Comedy: "Comedy"
 }
-  router.get("/list", async (req, res, next) => {
-    try {
-      const {genre, type} = req.query;
-      const options = {};
-      if (genre && genresList[genre])
-        options.genres = { $elemMatch: { name: genresList[genre] } };
-      if (type && types[type]) options.type = types[type];
-      const movies = await Movie.find(options).select( "_id type title poster rating genres");
+router.get("/list", async (req, res, next) => {
+  try {
+      const movieGenres = req.query["genres"];
+      const findQuery = {
+          ...(movieGenres !== undefined && { "genre.id": Number(movieGenres) })
+      };
+      const filmscounts = await Movie.count();
+      const { count = 10 } = req.query;
+      const skip = getRandomArbitrary(0, filmscounts - count);
+      const movies = await Movie.find(findQuery, { skip: skip, limit: count }).select("id title genre poster rating author");
       const shuffledMovies = shuffle(movies);
-      if (!shuffledMovies) throw new Error("No movies found");
-      res.status(200).json(shuffledMovies.slice(0, 8));
-    } catch (error) {
+      res.json(shuffledMovies);
+  } catch (error) {
       next(error);
-    }
-  });
+  }
+});
   router.get("/:id", async (req, res, next) => {
     try {
         const movieId = req.params["id"];
