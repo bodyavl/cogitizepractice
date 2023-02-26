@@ -15,7 +15,7 @@ const blogSchema = new Schema({
   description: String,
   rating: Number,
   genres: [genreSchema],
-  run_time: Number,
+  runtime: Number,
   poster: String,
   backdrop: String,
   date: { type: Date, required: false },
