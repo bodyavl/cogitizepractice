@@ -10,7 +10,7 @@ const { shuffle } = require("../utils");
 router.post('/createMovie', async (req, res, next) => {
   try{
    console.log("Create movie request",req.body);
-    const {id,title, description, rating, genres,poster,logo,run_time} = req.body;
+    const {id,title, description, rating, genres,poster,backdrop,run_time} = req.body;
     const movie =  await Movie.create ({
       id,
       title,
@@ -19,7 +19,7 @@ router.post('/createMovie', async (req, res, next) => {
       genres,
       run_time,
       poster,
-      logo,
+      backdrop
     });
     console.log("Movie created :", movie);
     res.json(movie);
@@ -91,7 +91,7 @@ const genresList = {
                },
              }
            );
-           const {id,title,genres,run_time,overview,release_date,poster_path,vote_average,} = response.data;
+           const {id,title,genres,run_time,overview,release_date,poster_path,vote_average,backdrop_path} = response.data;
            if (overview) {
              const newMovie = await Movie.create({
                id,
@@ -99,6 +99,7 @@ const genresList = {
                type: "Movie",
                description: overview,
               poster: `https://image.tmdb.org/t/p/original${poster_path}`,
+              backdrop: `https://image.tmdb.org/t/p/original${backdrop_path}`,
                rating: vote_average,
                genres,
                run_time,

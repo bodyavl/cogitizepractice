@@ -17,7 +17,7 @@ const blogSchema = new Schema({
   genres: [genreSchema],
   run_time: Number,
   poster: String,
-  logo: String,
+  backdrop: String,
   date: { type: Date, required: false },
 });
 const Movie = mongoose.model('Movie', blogSchema);
