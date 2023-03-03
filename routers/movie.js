@@ -6,7 +6,8 @@ const axios = require("axios").default;
 const router = express.Router();
 
 const Movie = require("../db/models/movie");
-const User = require('../db/models/user');
+const User = require("../db/models/user");
+const Stats = require("../db/models/stats")
 const { shuffle } = require("../utils");
 
 router.post("/create", async (req, res, next) => {
@@ -43,9 +44,13 @@ const types = {
   Movie: "Movie",
   TV: "TV show"
 }
+const manualList = {
+  true: true,
+  false: false
+}
 router.get("/list", async (req, res, next) => {
   try {
-    const { genre, type } = req.query;
+    const { genre, type, manual } = req.query;
 
     const options = {};
 
@@ -58,8 +63,26 @@ router.get("/list", async (req, res, next) => {
       "_id type title poster rating genres"
     );
     const shuffledMovies = shuffle(movies);
+    const returnMovies = shuffledMovies.slice(0, 8)
     if (!shuffledMovies) throw new Error("No movies found");
-    res.status(200).json(shuffledMovies.slice(0, 8));
+
+    if(req.session.userId)
+    {
+      const { userId } = req.session;
+      const stats = await Stats.findOne({ userId });
+      if(!stats) throw new Error("Wrong userId in session");
+      let { movies, tv, suggestions, man_suggestions } = stats;
+      for(let movie of returnMovies)
+      {
+        if(movie.type === "Movie") movies += 1;
+        if(movie.type === "TV show") tv += 1;
+      }
+      if(manualList[manual]) man_suggestions += 1;
+      else suggestions += 1;
+      await Stats.findOneAndUpdate({ userId }, { suggestions, movies, tv, man_suggestions }, { new: true })
+    }
+
+    res.status(200).json(returnMovies);
   } catch (error) {
     next(error);
   }

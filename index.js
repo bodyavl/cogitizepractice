@@ -11,6 +11,7 @@ const session = require('express-session');
 const app = express();
 
 app.use(cors({ credentials: true, origin: true }));
+app.use(express.urlencoded({extended: true}))
 app.use(bodyParser.json({ type: "application/json" }));
 app.use(session({
   secret: 'my-secret-key',
@@ -35,5 +36,5 @@ app.use(errorHandler);
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("On port", port);
-  runBackgroundFetching();
+  // runBackgroundFetching();
 });
