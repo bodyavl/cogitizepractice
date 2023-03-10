@@ -100,13 +100,17 @@ router.get("/:id", async (req, res, next) => {
 
 function checkLogIn(req, res, next) {
   const authHeader = req.headers['authorization'];
-  const token = authHeader.split(' ')[1];
+  if(authHeader)
+  {
+    const token = authHeader.split(' ')[1];
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if(err) next();
-    req.user = user;
-    next();
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+      if(err) next();
+      req.user = user;
+      next();
   })
+  }
+  
 }
 
 const FETCHINGDELAY = 5000;
