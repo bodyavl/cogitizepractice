@@ -4,7 +4,7 @@ dotenv.config();
 const express = require("express");
 const axios = require("axios").default;
 const router = express.Router();
-
+const jwt = require('jsonwebtoken');
 const Movie = require("../db/models/movie");
 const User = require("../db/models/user");
 const Stats = require("../db/models/stats")
@@ -48,10 +48,9 @@ const manualList = {
   true: true,
   false: false
 }
-router.get("/list", async (req, res, next) => {
+router.get("/list", checkLogIn, async (req, res, next) => {
   try {
     const { genre, type, manual } = req.query;
-
     const options = {};
 
     if (genre && genresList[genre])
@@ -65,10 +64,9 @@ router.get("/list", async (req, res, next) => {
     const shuffledMovies = shuffle(movies);
     const returnMovies = shuffledMovies.slice(0, 8)
     if (!shuffledMovies) throw new Error("No movies found");
-
-    if(req.session.userId)
+    if(req.user)
     {
-      const { userId } = req.session;
+      const { userId } = req.user;
       const stats = await Stats.findOne({ userId });
       if(!stats) throw new Error("Wrong userId in session");
       let { movies, tv, suggestions, man_suggestions } = stats;
@@ -100,8 +98,20 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+function checkLogIn(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader.split(' ')[1];
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if(err) next();
+    req.user = user;
+    next();
+  })
+}
+
 const FETCHINGDELAY = 5000;
 const iterationCount = 50;
+
 async function addMoviesToDatabase(pageIteration = 1) {
   if (pageIteration > 20000) return;
   for (let i = 1; i < pageIteration + iterationCount ; i++) {

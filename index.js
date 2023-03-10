@@ -6,7 +6,7 @@ const express = require("express");
 require("./db")
 const bodyParser = require("body-parser");
 const { router, runBackgroundFetching } = require('./routers/movie');
-const userRouter = require('./routers/user')
+const { userRouter } = require('./routers/user')
 const session = require('express-session');
 const app = express();
 
