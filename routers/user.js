@@ -29,8 +29,8 @@ router.post("/signup", async (req, res, next) => {
         suggestions: 0,
         man_suggestions: 0,
     })
-    const accessToken = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' });
-    const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+    const accessToken = generateAccessToken(user);
+    const refreshToken = jwt.sign({ userId: user._id, email: user.email }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
     refreshTokens.push(refreshToken);
 
     res.status(200).send({ accessToken, refreshToken });
@@ -48,7 +48,7 @@ router.post("/login", async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       const accessToken = generateAccessToken(user);
-      const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '2h' });
+      const refreshToken = jwt.sign({ userId: user._id, email: user.email }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '2h' });
       refreshTokens.push(refreshToken);
       res.status(200).send({ accessToken, refreshToken });  
     } else throw new Error("Invalid email or password");
@@ -64,7 +64,7 @@ router.post('/token', (req, res, next) => {
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
       if (err) res.sendStatus(401);
-      const accessToken = generateAccessToken(user);
+      const accessToken = generateAccessToken({_id: user.userId, email: user.email});
       res.json({ accessToken })
     })
   } catch (error) {

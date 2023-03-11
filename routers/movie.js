@@ -55,12 +55,12 @@ router.get("/list", checkLogIn, async (req, res, next) => {
 
     if (genre && genresList[genre])
       options.genres = { $elemMatch: { name: genresList[genre] } };
-
+    
     if (type && types[type]) options.type = types[type];
-
     const movies = await Movie.find(options).select(
       "_id type title poster rating genres"
     );
+    
     const shuffledMovies = shuffle(movies);
     const returnMovies = shuffledMovies.slice(0, 8)
     if (!shuffledMovies) throw new Error("No movies found");
@@ -68,7 +68,7 @@ router.get("/list", checkLogIn, async (req, res, next) => {
     {
       const { userId } = req.user;
       const stats = await Stats.findOne({ userId });
-      if(!stats) throw new Error("Wrong userId in session");
+      if(!stats) throw new Error("Wrong userId");
       let { movies, tv, suggestions, man_suggestions } = stats;
       for(let movie of returnMovies)
       {
@@ -105,14 +105,8 @@ function checkLogIn(req, res, next) {
     const token = authHeader.split(' ')[1];
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-      if(err)
-      {
-        next();
-      }
-      else{
-        req.user = user;
-        next();
-      }
+      if(err) return res.sendStatus(401);
+      req.user = user;
   })
   }
   next();
