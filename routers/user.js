@@ -51,7 +51,7 @@ router.post("/login", async (req, res, next) => {
       const refreshToken = jwt.sign({ userId: user._id, email: user.email }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1m' });
       refreshTokens.push(refreshToken);
       res.status(200).send({ accessToken, refreshToken });  
-    } else throw new Error("Invalid email or password");
+    } else res.sendStatus(403);
   } catch (error) {
     next(error);
   }
