@@ -57,11 +57,8 @@ router.get("/list", checkLogIn, async (req, res, next) => {
       options.genres = { $elemMatch: { name: genresList[genre] } };
     
     if (type && types[type]) options.type = types[type];
-    const movies = await Movie.find(options).select(
-      "_id type title poster rating genres"
-    );
     
-    const returnMovies = await getRandomMovies();
+    const returnMovies = await getRandomMovies(options);
     if (!returnMovies) throw new Error("No movies found");
     if(req.user)
     {
