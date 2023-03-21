@@ -58,15 +58,15 @@ router.get("/list", checkLogIn, async (req, res, next) => {
     
     if (type && types[type]) options.type = types[type];
     
-    const movies = await getRandomMovies(options);
-    if (!movies) throw new Error("No movies found");
+    const returnMovies = await getRandomMovies(options);
+    if (!returnMovies) throw new Error("No movies found");
     if(req.user)
     {
       const { userId } = req.user;
       const stats = await Stats.findOne({ userId });
       if(!stats) throw new Error("Wrong userId");
       let { movies, tv, suggestions, man_suggestions } = stats;
-      for(let movie of movies)
+      for(let movie of returnMovies)
       {
         if(movie.type === "Movie") movies += 1;
         if(movie.type === "TV show") tv += 1;
@@ -76,7 +76,7 @@ router.get("/list", checkLogIn, async (req, res, next) => {
       await Stats.findOneAndUpdate({ userId }, { suggestions, movies, tv, man_suggestions }, { new: true })
     }
 
-    res.status(200).json(movies);
+    res.status(200).json(returnMovies);
   } catch (error) {
     next(error);
   }
