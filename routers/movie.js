@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const Movie = require("../db/models/movie");
 const User = require("../db/models/user");
 const Stats = require("../db/models/stats")
-const { shuffle } = require("../utils");
+const { getRandomMovies } = require("../utils");
 
 router.post("/create", async (req, res, next) => {
   try {
@@ -61,9 +61,8 @@ router.get("/list", checkLogIn, async (req, res, next) => {
       "_id type title poster rating genres"
     );
     
-    const shuffledMovies = shuffle(movies);
-    const returnMovies = shuffledMovies.slice(0, 8)
-    if (!shuffledMovies) throw new Error("No movies found");
+    const returnMovies = await getRandomMovies();
+    if (!returnMovies) throw new Error("No movies found");
     if(req.user)
     {
       const { userId } = req.user;

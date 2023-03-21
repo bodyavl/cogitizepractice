@@ -1,19 +1,7 @@
-function shuffle(targetArray) {
-  let array = [...targetArray];
-  let currentIndex = array.length,
-    randomIndex;
-
-  while (currentIndex != 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-  return array;
+const Movie = require('./db/models/movie');
+async function getRandomMovies(limit = 8){
+  return await Movie.aggregate([{ $sample: { size: limit } }]);
 }
 module.exports = {
-  shuffle,
+  getRandomMovies
 };
