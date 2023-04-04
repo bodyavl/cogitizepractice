@@ -42,9 +42,9 @@ router.post("/signup", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    // Find the user by email in MongoDB
+
     const user = await User.findOne({ email });
-    // Compare the hashed password with the user's input
+    
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       const accessToken = generateAccessToken(user);
