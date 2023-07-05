@@ -22,6 +22,7 @@ function errorHandler(error, req, res, next) {
   res.header("Content-Type", "application/json");
   console.log("Error occured: ", error.message);
   res.status(500).send(error.message);
+  next();
 }
 
 
