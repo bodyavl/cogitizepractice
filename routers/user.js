@@ -33,7 +33,7 @@ router.post("/signup", async (req, res, next) => {
     const refreshToken = generateRefreshToken(user);
     refreshTokens.push(refreshToken);
 
-    res.status(200).send({ accessToken, refreshToken });
+    res.json({ accessToken, refreshToken });
   } catch (error) {
     next(error);
   }
@@ -63,9 +63,13 @@ router.post('/token', (req, res, next) => {
     if(!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-      if (err) res.sendStatus(401);
+      if (err) return res.sendStatus(401);
+      refreshTokens = refreshTokens.filter(token => token !== refreshToken);
+
       const accessToken = generateAccessToken({_id: user.userId, email: user.email});
-      res.json({ accessToken })
+      const refreshToken = generateRefreshToken({_id: user.userId, email: user.email});
+
+      res.json({ accessToken, refreshToken })
     })
   } catch (error) {
     next(error);
