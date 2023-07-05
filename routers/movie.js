@@ -28,7 +28,7 @@ router.post("/create", async (req, res, next) => {
     };
 
     const newMovie = await Movie.create(movieRequest);
-    res.status(200).send(newMovie);
+    res.json(newMovie);
   } catch (error) {
     next(error);
   }
@@ -73,10 +73,10 @@ router.get("/list", checkLogIn, async (req, res, next) => {
       }
       if(manualList[manual]) man_suggestions += 1;
       else suggestions += 1;
-      await Stats.findOneAndUpdate({ userId }, { suggestions, movies, tv, man_suggestions }, { new: true })
+      await Stats.findbyIdAndUpdate(userId, { suggestions, movies, tv, man_suggestions }, { new: true })
     }
 
-    res.status(200).json(returnMovies);
+    res.json(returnMovies);
   } catch (error) {
     next(error);
   }
@@ -87,7 +87,7 @@ router.get("/:id", async (req, res, next) => {
     const { id } = req.params;
     const movie = await Movie.findById(id).select("-__v -_id");
 
-    if (movie) res.status(200).json(movie);
+    if (movie) res.json(movie);
     else throw new Error("Movie was not found");
   } catch (error) {
     next(error);
