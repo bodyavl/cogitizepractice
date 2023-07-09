@@ -73,7 +73,7 @@ router.get("/list", checkLogIn, async (req, res, next) => {
       }
       if(manualList[manual]) man_suggestions += 1;
       else suggestions += 1;
-      await Stats.findbyIdAndUpdate(userId, { suggestions, movies, tv, man_suggestions }, { new: true })
+      await Stats.findByIdAndUpdate(userId, { suggestions, movies, tv, man_suggestions }, { new: true })
     }
 
     res.json(returnMovies);
